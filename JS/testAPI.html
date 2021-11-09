@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test de l'API Kanap</title>
+  </head>
+  <body>
+    <h1>Test de récupération d'éléments de l'API</h1>
+    <!-- select pour faire varier le numéro du produit -->
+    <label for="product-select">Selection du produit numéro</label>
+    <select name="product-select" id="product-select">
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <option value="7">7</option>
+      <option value="8">8</option>
+      <option value="9">9</option>
+    </select>
+    <!-- article affichant le nom et la description du produitsélectionné -->
+    <article id="product">
+      <h2 id="product__name">Nom du produit</h2>
+      <p id="product__description">Description du produit</p>
+    </article>
+    <script src="./testAPI.js"></script>
+  </body>
+</html>
