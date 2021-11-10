@@ -5,8 +5,8 @@
 // selection of section with id items
 const items = document.getElementById("items");
 
-// function to create a product
-function addProduct(products, index) {
+// function to create and add a product on HTML page
+function addOneProduct(products, index) {
   // product card HTML elements creation
   const ancre = document.createElement("a");
   const article = document.createElement("article");
@@ -28,16 +28,13 @@ function addProduct(products, index) {
   image.setAttribute("src", products[index].imageUrl);
   image.setAttribute("alt", products[index].altTxt);
 }
-// function to obtain all the products datas
+// function to get all the products informations
 let getProducts = async function () {
   try {
     let response = await fetch("http://localhost:3000/api/products");
     if (response.ok) {
       let data = await response.json();
-      for (let i in data) {
-        console.log(data[i]);
-        addProduct(data, i);
-      }
+      return data;
     } else {
       console.log(response.status);
     }
@@ -45,5 +42,14 @@ let getProducts = async function () {
     console.log(error);
   }
 };
-// calling the function to get products data and add them
-getProducts();
+// function to add all the products of the API on index page
+async function addProducts() {
+  // getting the products
+  const products = await getProducts();
+  for (let i in products) {
+    console.log(products[i]);
+    // adding the products
+    addOneProduct(products,i)
+  }
+}
+addProducts();
