@@ -1,6 +1,6 @@
-/* ----------------------------------------- */
-/*       Adding products to index page       */
-/* ----------------------------------------- */
+/* ----------------------------------------------- */
+/*          Adding products to index page          */
+/* ----------------------------------------------- */
 
 // selection of section with id items
 const items = document.getElementById("items");
@@ -23,6 +23,7 @@ function addOneProduct(products, index) {
   article.appendChild(productName);
   article.appendChild(productDescription);
   // ading content to the HTML elements
+  ancre.setAttribute("href","./product.html?id="+products[index]._id)
   productName.textContent = products[index].name;
   productDescription.textContent = products[index].description;
   image.setAttribute("src", products[index].imageUrl);
