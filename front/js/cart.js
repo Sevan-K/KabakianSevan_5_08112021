@@ -10,6 +10,7 @@ class CartItem {
   }
 }
 const test = new CartItem(42, 12, "red");
+const test2 = new CartItem(42, 12, "green");
 const testStringified = JSON.stringify(test);
 console.log("Test stringified : ", testStringified);
 // localStorage.setItem("testId", test.id);
@@ -47,23 +48,35 @@ let getItemInfoOnCart = (cart, item) => {
   return itemInfoOnCart;
 };
 // fonction addItemToCart qui prend un newCartItem et l'ajoute au panier si nécessaire
+let 
 
-// fonction qui construit le panier à partir du local storage
+// fonction to build cart from the local storage
 function buildCartFromStorage() {
   let cart = [];
   for (let i = 0; i < localStorage.length; i++) {
+    // recover the name of the key
     let key = localStorage.key(i);
+    // revover the corresponding value
     let value = localStorage.getItem(key);
+    // parsing the value to an JS object
     cart.push(JSON.parse(value));
   }
   console.log("Panier construit à partir du localStorage", cart);
   return cart;
 }
-let cart = [];
+let cart = [test2];
 getItemInfoOnCart(cart, test);
 
 // fonction pour ajouter le panier au local storage
-
+function storeCart(cart){
+  // delete the old version of localStorage
+  localStorage.clear;
+  for (item of cart){
+    let itemKey = item.id + "_" + item.color;
+    const itemStringified = JSON.stringify(item);
+    localStorage.setItem(itemKey, itemStringified);
+  }
+}
 // ces fonctions seront appelées lorsqu'on clique sur le bonton "ajouter au panier"
 // test si panier vide si oui ajout de l'article
 // sinon appel la fonction pour construire le panier
