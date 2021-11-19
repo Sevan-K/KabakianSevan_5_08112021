@@ -43,7 +43,7 @@ let getItemInfoOnCart = (cart, item) => {
     isIdOnCart: false,
     isItemOnCart: false,
   };
-  for (let i in cart) {
+  for (let i = 0; i < cart.length; i++) {
     if (cart[i].id === item.id && cart[i].color === item.color) {
       itemInfoOnCart.cartIndex = i;
       itemInfoOnCart.isIdOnCart = true;
@@ -81,23 +81,29 @@ function buildCartFromStorage() {
 // fonction addItemToCart qui prend un newCartItem et l'ajoute au panier si nécessaire
 function addItemToCart(cart, item) {
   // get item info on cart (is the item on cart or not) to know what to do
-  let itemOnCart = getItemInfoOnCart(cart, item);
+  const itemOnCart = getItemInfoOnCart(cart, item);
   // the exact same item is already on the cart
   if (itemOnCart.isItemOnCart) {
     // increment item quantity
-    console.log("incrémenter");
+    cart[itemOnCart.cartIndex].quantity += item.quantity;
+    // console.log("Panier après modification de l'article",cart);
   }
   // a similar article is found on the cart
   else if (itemOnCart.isIdOnCart) {
-    console.log("ajouter après l'article similaire");
+    const indexToTarget = itemOnCart.cartIndex + 1;
+    cart.splice(indexToTarget, 0, item);
   }
   // no similar item is found on cart
   else {
-    console.log("simplement ajouter");
+    cart.push(item);
+    //  tu es ici et ça ne fonctionne pas !!!!!!!!!!!!!!!!!!!!!!!!!!!!
   }
 }
+console.log("Test addtoCart 1, ajout d'un article similaire");
 addItemToCart(buildCartFromStorage(), test);
+console.log("Test addtoCart 2, ajout d'un article similaire");
 addItemToCart(buildCartFromStorage(), test2);
+console.log("Test addtoCart 3, ajout article dans un panier vide");
 addItemToCart([], test2);
 
 // fonction pour ajouter le panier au local storage
@@ -125,4 +131,4 @@ addToCart.addEventListener("click", function () {
     // store cart into storage (done)
   }
 });
-// est-ce que le local storage se remet à 0 quand on ouvre le navigateur ?
+// est-ce que le local storage se remet à 0 quand on ouvre le navigateur ? testé c'est oui
