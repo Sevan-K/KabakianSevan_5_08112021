@@ -9,34 +9,31 @@ class CartItem {
     this.color = color;
   }
 }
-sessionStorage.clear()
+// sessionStorage.clear();
+// ligne pour vérifier l'état du sessionStorage en arrivant sur la page
 console.log("Etat du storage en arrivant sur la page", sessionStorage);
 
 // éléments pour les test sur les différéntes fonction nécessaires à l'ajout et la modificcation d'éléménets
-const test = new CartItem(42, 12, "red");
-const test2 = new CartItem(42, 12, "green");
-const testStringified = JSON.stringify(test);
-console.log("Test stringified : ", testStringified);
-// sessionStorage.setItem("testId", test.id);
-// sessionStorage.setItem("testQuantity", test.quantity);
-// sessionStorage.setItem("testColor", test.color);
-let testKey = test.id + "_" + test.color;
-sessionStorage.setItem(testKey, testStringified);
-// const testRecovered = new CartItem(sessionStorage.getItem("testId"),sessionStorage.getItem("testQuantity"),sessionStorage.getItem("testColor"));
-testRecovered = JSON.parse(sessionStorage.getItem(testKey));
-console.log("Test récupéré du local storage et parsé : ", testRecovered);
-console.log("sessionStorage après ajout d'un premier élément",sessionStorage);
-// sessionStorage.clear()
-// console.log(sessionStorage);
+// const test = new CartItem(42, 12, "red");
+// const test2 = new CartItem(42, 12, "green");
+// const testStringified = JSON.stringify(test);
+// console.log("Test stringified : ", testStringified);
+// let testKey = test.id + "_" + test.color;
+// sessionStorage.setItem(testKey, testStringified);
+// testRecovered = JSON.parse(sessionStorage.getItem(testKey));
+// console.log("Test récupéré du local storage et parsé : ", testRecovered);
+// console.log("sessionStorage après ajout d'un premier élément", sessionStorage);
 
 // faire une fonction getItemToAddToCart qui construit la valeur de l'item à ajouter au panier
 let quantity = document.getElementById("quantity");
 let getItem = () => {
-  let item = new CartItem(productId, quantity.value, colorSelect.value);
-  console.log("L'article créer est le suivant : ", item);
+  const itemQuantity = parseInt(quantity.value);
+  let item = new CartItem(productId, itemQuantity, colorSelect.value);
+  console.log("L'article créé est le suivant : ", item);
   return item;
 };
-getItem();
+// test de la fonction pour récupérer les article de la page
+// getItem();
 
 // fonction qui parcours le panier et précise si l'article (id + couleur) est déjà présent
 let getItemInfoOnCart = (cart, item) => {
@@ -69,8 +66,10 @@ function buildCartFromStorage() {
       let key = sessionStorage.key(i);
       // revover the corresponding value
       let value = sessionStorage.getItem(key);
-      // parsing the value to an JS object
-      storedCart.push(JSON.parse(value));
+      if (key != "IsThisFirstTime_Log_From_LiveServer") {
+        // parsing the value to an JS object
+        storedCart.push(JSON.parse(value));
+      }
     }
   }
   console.log("Panier construit à partir du sessionStorage", storedCart);
@@ -88,44 +87,48 @@ function addItemToCart(cart, item) {
   if (itemOnCart.isItemOnCart) {
     // increment item quantity
     cart[itemOnCart.cartIndex].quantity += item.quantity;
-    // console.log("Panier après modification de l'article",cart);
   }
   // a similar article is found on the cart
   else if (itemOnCart.isIdOnCart) {
+    // add the item before the similar one
     const indexToTarget = itemOnCart.cartIndex + 1;
     cart.splice(indexToTarget, 0, item);
   }
   // no similar item is found on cart
   else {
     cart.push(item);
-    //  tu es ici et ça ne fonctionne pas !!!!!!!!!!!!!!!!!!!!!!!!!!!!
   }
   console.log("Panier après modification ou ajout", cart);
   return cart;
 }
 
 // série de test de la fonction addItemToCart
-console.log("Test addtoCart 1, ajout d'un article similaire");
-let testCart = addItemToCart(buildCartFromStorage(), test);
+// console.log("Test addtoCart 1, ajout d'un article similaire");
+// let testCart = addItemToCart(buildCartFromStorage(), test);
 // console.log("Test addtoCart 2, ajout d'un article similaire");
-// addItemToCart(buildCartFromStorage(), test2);
+// let testCart = addItemToCart(buildCartFromStorage(), test2);
 // console.log("Test addtoCart 3, ajout article dans un panier vide");
-// addItemToCart([], test2);
+// let testCart = addItemToCart([], test2);
 
 // fonction pour ajouter le panier au local storage
 function storeCart(cart) {
   // delete the old version of sessionStorage
-  sessionStorage.clear;
+  sessionStorage.clear();
   // store the items into the local storage
   for (item of cart) {
     let itemKey = item.id + "_" + item.color;
     const itemStringified = JSON.stringify(item);
     sessionStorage.setItem(itemKey, itemStringified);
   }
+  console.log(
+    "sessionStorage après intégration du nouvel article",
+    sessionStorage
+  );
 }
 
-storeCart(testCart);
-console.log("Etat du storage après les tests réalisés", sessionStorage);
+// test pour la fonction stockage du pannier dans le sessionStorage
+// storeCart(testCart);
+// console.log("Etat du storage après les tests réalisés", sessionStorage);
 
 // code to be executed when addToCart button is clicked on
 const addToCart = document.getElementById("addToCart");
@@ -136,9 +139,13 @@ addToCart.addEventListener("click", function () {
     console.log("Couleur :", colorSelect.value);
     console.log("Quantité", quantity.value);
     // appel des différentes fonctions :
-    // get item (done)
-    // build cart form storage (done)
-    // add item or increment existing one (WIP)
-    // store cart into storage (done)
+    // 1 - get information about the item to add to cart
+    let itemToAdd = getItem();
+    // build cart form storage
+    let cartToModify = buildCartFromStorage();
+    //modify the cart according the item to add
+    let cartModified = addItemToCart(cartToModify, itemToAdd);
+    // store cart into sessionStorage
+    storeCart(cartModified);
   }
 });
