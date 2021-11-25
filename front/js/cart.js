@@ -9,23 +9,25 @@ class CartItem {
     this.color = color;
   }
 }
-console.log("Etat du storage en arrivant sur la page", localStorage);
+sessionStorage.clear()
+console.log("Etat du storage en arrivant sur la page", sessionStorage);
 
+// éléments pour les test sur les différéntes fonction nécessaires à l'ajout et la modificcation d'éléménets
 const test = new CartItem(42, 12, "red");
 const test2 = new CartItem(42, 12, "green");
 const testStringified = JSON.stringify(test);
 console.log("Test stringified : ", testStringified);
-// localStorage.setItem("testId", test.id);
-// localStorage.setItem("testQuantity", test.quantity);
-// localStorage.setItem("testColor", test.color);
+// sessionStorage.setItem("testId", test.id);
+// sessionStorage.setItem("testQuantity", test.quantity);
+// sessionStorage.setItem("testColor", test.color);
 let testKey = test.id + "_" + test.color;
-localStorage.setItem(testKey, testStringified);
-// const testRecovered = new CartItem(localStorage.getItem("testId"),localStorage.getItem("testQuantity"),localStorage.getItem("testColor"));
-testRecovered = JSON.parse(localStorage.getItem(testKey));
+sessionStorage.setItem(testKey, testStringified);
+// const testRecovered = new CartItem(sessionStorage.getItem("testId"),sessionStorage.getItem("testQuantity"),sessionStorage.getItem("testColor"));
+testRecovered = JSON.parse(sessionStorage.getItem(testKey));
 console.log("Test récupéré du local storage et parsé : ", testRecovered);
-console.log(localStorage);
-// localStorage.clear()
-// console.log(localStorage);
+console.log("sessionStorage après ajout d'un premier élément",sessionStorage);
+// sessionStorage.clear()
+// console.log(sessionStorage);
 
 // faire une fonction getItemToAddToCart qui construit la valeur de l'item à ajouter au panier
 let quantity = document.getElementById("quantity");
@@ -59,22 +61,22 @@ let getItemInfoOnCart = (cart, item) => {
 
 // fonction to build cart from the local storage
 function buildCartFromStorage() {
-  let cart = [];
+  let storedCart = [];
   // if there is nothing on the local storage it means there is nothing on the cart
-  if (localStorage.length > 0) {
-    for (let i = 0; i < localStorage.length; i++) {
+  if (sessionStorage.length > 0) {
+    for (let i = 0; i < sessionStorage.length; i++) {
       // recover the name of the key
-      let key = localStorage.key(i);
+      let key = sessionStorage.key(i);
       // revover the corresponding value
-      let value = localStorage.getItem(key);
+      let value = sessionStorage.getItem(key);
       // parsing the value to an JS object
-      cart.push(JSON.parse(value));
+      storedCart.push(JSON.parse(value));
     }
   }
-  console.log("Panier construit à partir du localStorage", cart);
-  return cart;
+  console.log("Panier construit à partir du sessionStorage", storedCart);
+  return storedCart;
 }
-
+// tests de la fonction getItemInfoOnCart
 // let cart = [test2];
 // getItemInfoOnCart(cart, test);
 
@@ -98,24 +100,33 @@ function addItemToCart(cart, item) {
     cart.push(item);
     //  tu es ici et ça ne fonctionne pas !!!!!!!!!!!!!!!!!!!!!!!!!!!!
   }
+  console.log("Panier après modification ou ajout", cart);
+  return cart;
 }
+
+// série de test de la fonction addItemToCart
 console.log("Test addtoCart 1, ajout d'un article similaire");
-addItemToCart(buildCartFromStorage(), test);
-console.log("Test addtoCart 2, ajout d'un article similaire");
-addItemToCart(buildCartFromStorage(), test2);
-console.log("Test addtoCart 3, ajout article dans un panier vide");
-addItemToCart([], test2);
+let testCart = addItemToCart(buildCartFromStorage(), test);
+// console.log("Test addtoCart 2, ajout d'un article similaire");
+// addItemToCart(buildCartFromStorage(), test2);
+// console.log("Test addtoCart 3, ajout article dans un panier vide");
+// addItemToCart([], test2);
 
 // fonction pour ajouter le panier au local storage
 function storeCart(cart) {
-  // delete the old version of localStorage
-  localStorage.clear;
+  // delete the old version of sessionStorage
+  sessionStorage.clear;
+  // store the items into the local storage
   for (item of cart) {
     let itemKey = item.id + "_" + item.color;
     const itemStringified = JSON.stringify(item);
-    localStorage.setItem(itemKey, itemStringified);
+    sessionStorage.setItem(itemKey, itemStringified);
   }
 }
+
+storeCart(testCart);
+console.log("Etat du storage après les tests réalisés", sessionStorage);
+
 // code to be executed when addToCart button is clicked on
 const addToCart = document.getElementById("addToCart");
 addToCart.addEventListener("click", function () {
@@ -131,4 +142,3 @@ addToCart.addEventListener("click", function () {
     // store cart into storage (done)
   }
 });
-// est-ce que le local storage se remet à 0 quand on ouvre le navigateur ? testé c'est oui
