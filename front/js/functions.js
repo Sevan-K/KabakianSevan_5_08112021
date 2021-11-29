@@ -5,9 +5,7 @@
 // function to get product's informations
 let getProductById = async function (id) {
   try {
-    let response = await fetch(
-      "http://localhost:3000/api/products/" + id
-    );
+    let response = await fetch("http://localhost:3000/api/products/" + id);
     if (response.ok) {
       let data = await response.json();
       return data;
@@ -63,6 +61,9 @@ let getItemInfoOnCart = (cart, item) => {
     isIdOnCart: false,
     isItemOnCart: false,
   };
+  //  l'erreur vient de là !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // il faut remplacer la boucle for par une boucle while
+  // while ()
   for (let i = 0; i < cart.length; i++) {
     if (cart[i].id === item.id && cart[i].color === item.color) {
       itemInfoOnCart.cartIndex = i;
@@ -82,9 +83,9 @@ function buildCartFromStorage() {
   let storedCart = [];
   // if there is nothing on the local storage it means there is nothing on the cart
   if (sessionStorage.length > 0) {
-    for (let i = 0; i < sessionStorage.length; i++) {
+    for (let j = 0; j < sessionStorage.length; j++) {
       // recover the name of the key
-      let key = sessionStorage.key(i);
+      let key = sessionStorage.key(j);
       // revover the corresponding value
       let value = sessionStorage.getItem(key);
       if (key != "IsThisFirstTime_Log_From_LiveServer") {
@@ -105,8 +106,10 @@ function addItemToCart(cart, item) {
   // get item info on cart (is the item on cart or not) to know what to do
   const itemOnCart = getItemInfoOnCart(cart, item);
   // the exact same item is already on the cart
-  if (itemOnCart.isItemOnCart) {
+  if (itemOnCart.isItemOnCart && itemOnCart.isIdOnCart) {
     // increment item quantity
+    // il y a une erreur sur l'index !!!!!!!!!!!!!!!!!
+    console.log(itemOnCart.cartIndex);
     cart[itemOnCart.cartIndex].quantity += item.quantity;
   }
   // a similar article is found on the cart
