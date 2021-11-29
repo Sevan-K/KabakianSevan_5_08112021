@@ -11,25 +11,6 @@ console.log(
   productId
 );
 
-// utiliser l'API avec un /et l'id du produit pour faire la sélection
-
-// function to get all the products informations
-let getProductById = async function () {
-  try {
-    let response = await fetch(
-      "http://localhost:3000/api/products/" + productId
-    );
-    if (response.ok) {
-      let data = await response.json();
-      return data;
-    } else {
-      console.log(response.status);
-    }
-  } catch (error) {
-    console.log(error);
-  }
-};
-
 // Need HTML elements creation
 const intemImg = document.getElementsByClassName("item__img")[0];
 const image = document.createElement("img");
@@ -52,7 +33,7 @@ let addColors = (colors) => {
 // function to add product info
 async function addProductInfo() {
   // getting the product information
-  let product = await getProductById();
+  let product = await getProductById(productId);
   console.log("Information du produit dont on a récupérer l'id", product);
   // adding product info into HTML elmeents
   image.setAttribute("src", product.imageUrl);
@@ -63,3 +44,27 @@ async function addProductInfo() {
   addColors(product.colors);
 }
 addProductInfo();
+
+/* ----------------------------------------- */
+/*          Adding products to cart          */
+/* ----------------------------------------- */
+
+// code to be executed when addToCart button is clicked on
+const addToCart = document.getElementById("addToCart");
+addToCart.addEventListener("click", function () {
+  if (colorSelect.value == "" || quantity.value == 0) {
+    alert("Sélectionnez une couleur et un nombre d'article supérieur à 0");
+  } else {
+    console.log("Couleur :", colorSelect.value);
+    console.log("Quantité", quantity.value);
+    // appel des différentes fonctions :
+    // 1 - get information about the item to add to cart
+    let itemToAdd = getItem();
+    // build cart form storage
+    let cartToModify = buildCartFromStorage();
+    //modify the cart according the item to add
+    let cartModified = addItemToCart(cartToModify, itemToAdd);
+    // store cart into sessionStorage
+    storeCart(cartModified);
+  }
+});

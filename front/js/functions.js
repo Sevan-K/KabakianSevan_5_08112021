@@ -1,6 +1,27 @@
-/* ----------------------------------------- */
-/*          Adding products to cart          */
-/* ----------------------------------------- */
+/* ---------------------------------------------------- */
+/*          Functions to get data from the API          */
+/* ---------------------------------------------------- */
+
+// function to get product's informations
+let getProductById = async function (id) {
+  try {
+    let response = await fetch(
+      "http://localhost:3000/api/products/" + id
+    );
+    if (response.ok) {
+      let data = await response.json();
+      return data;
+    } else {
+      console.log(response.status);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+/* -------------------------------------------------------- */
+/*          Functions related to cart modification          */
+/* -------------------------------------------------------- */
 
 class CartItem {
   constructor(id, quantity, color) {
@@ -28,9 +49,9 @@ console.log("Etat du storage en arrivant sur la page", sessionStorage);
 let quantity = document.getElementById("quantity");
 let getItem = () => {
   const itemQuantity = parseInt(quantity.value);
-  let item = new CartItem(productId, itemQuantity, colorSelect.value);
-  console.log("L'article créé est le suivant : ", item);
-  return item;
+  let itemToGet = new CartItem(productId, itemQuantity, colorSelect.value);
+  console.log("L'article créé est le suivant : ", itemToGet);
+  return itemToGet;
 };
 // test de la fonction pour récupérer les article de la page
 // getItem();
@@ -129,23 +150,3 @@ function storeCart(cart) {
 // test pour la fonction stockage du pannier dans le sessionStorage
 // storeCart(testCart);
 // console.log("Etat du storage après les tests réalisés", sessionStorage);
-
-// code to be executed when addToCart button is clicked on
-const addToCart = document.getElementById("addToCart");
-addToCart.addEventListener("click", function () {
-  if (colorSelect.value == "" || quantity.value == 0) {
-    alert("Sélectionnez une couleur et un nombre d'article supérieur à 0");
-  } else {
-    console.log("Couleur :", colorSelect.value);
-    console.log("Quantité", quantity.value);
-    // appel des différentes fonctions :
-    // 1 - get information about the item to add to cart
-    let itemToAdd = getItem();
-    // build cart form storage
-    let cartToModify = buildCartFromStorage();
-    //modify the cart according the item to add
-    let cartModified = addItemToCart(cartToModify, itemToAdd);
-    // store cart into sessionStorage
-    storeCart(cartModified);
-  }
-});
