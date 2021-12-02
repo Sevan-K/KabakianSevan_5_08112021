@@ -23,7 +23,7 @@ async function buildHtmlStructure(cart) {
       //     3.3 - à partir d'un produit (product) et d'un article du panier (cartItem),
       //              compléter le code html et l'ajouter à HtmlStructure (function to create)
       htmlStructure += `
-      <article class="cart__item" data-id="${itemToDisplay.id}">
+      <article class="cart__item" data-id="${itemToDisplay.id}_${itemToDisplay.color}">
           <div class="cart__item__img">
               <img src="${productConcerned.imageUrl}">
           </div>

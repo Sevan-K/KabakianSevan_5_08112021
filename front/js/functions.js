@@ -61,19 +61,22 @@ let getItemInfoOnCart = (cart, item) => {
     isIdOnCart: false,
     isItemOnCart: false,
   };
-  //  l'erreur vient de là !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // il faut remplacer la boucle for par une boucle while
-  // while ()
-  for (let i = 0; i < cart.length; i++) {
-    if (cart[i].id === item.id && cart[i].color === item.color) {
-      itemInfoOnCart.cartIndex = i;
-      itemInfoOnCart.isIdOnCart = true;
+  let loopCount = 0;
+  while (itemInfoOnCart.isItemOnCart === false && loopCount < cart.length) {
+    if (
+      cart[loopCount].id === item.id &&
+      cart[loopCount].color === item.color
+    ) {
+      itemInfoOnCart.cartIndex = loopCount;
       itemInfoOnCart.isItemOnCart = true;
-    } else if (cart[i].id === item.id) {
+    } else if (cart[loopCount].id === item.id) {
       itemInfoOnCart.isIdOnCart = true;
-      itemInfoOnCart.cartIndex = i;
+      itemInfoOnCart.cartIndex = loopCount;
     }
+    console.log("vérif couleur", cart[loopCount].id === item.id);
+    loopCount++;
   }
+  // for (let i = 0; i < cart.length; i++) {}
   console.log("Info de l'article dans le panier", itemInfoOnCart);
   return itemInfoOnCart;
 };
@@ -106,16 +109,14 @@ function addItemToCart(cart, item) {
   // get item info on cart (is the item on cart or not) to know what to do
   const itemOnCart = getItemInfoOnCart(cart, item);
   // the exact same item is already on the cart
-  if (itemOnCart.isItemOnCart && itemOnCart.isIdOnCart) {
+  if (itemOnCart.isItemOnCart) {
     // increment item quantity
-    // il y a une erreur sur l'index !!!!!!!!!!!!!!!!!
-    console.log(itemOnCart.cartIndex);
     cart[itemOnCart.cartIndex].quantity += item.quantity;
   }
   // a similar article is found on the cart
   else if (itemOnCart.isIdOnCart) {
     // add the item before the similar one
-    const indexToTarget = itemOnCart.cartIndex + 1;
+    const indexToTarget = itemOnCart.cartIndex;
     cart.splice(indexToTarget, 0, item);
   }
   // no similar item is found on cart
