@@ -71,6 +71,8 @@ async function displayCart(cart) {
   // display cart's total Price
   const totalPrice = document.getElementById("totalPrice");
   totalPrice.textContent = await calculateCartTotalPrice(cart);
+  // test
+  testDelete();
 }
 displayCart(cartToDisplay);
 
@@ -88,3 +90,17 @@ displayCart(cartToDisplay);
 //    3.1 Réupérer la valeur de quantité modifiée
 //    3.2 Modifier le cartToDisplay et ou le local storage
 // 4 Afficher le nouveau cart
+
+// test pour supprimer une ligne
+function testDelete() {
+  // stockage des articles
+  const deleteButtons = document.getElementsByClassName("cart__item");
+  console.log("élément deleteButtons", deleteButtons);
+  // boucle pour savoir sur lequel il y a un click
+  for (let deleteButton of deleteButtons) {
+    deleteButton.addEventListener("click", function () {
+      let itemToDeleteId = deleteButton.dataset.id;
+      console.log("élément deleteButton", itemToDeleteId);
+    });
+  }
+}
