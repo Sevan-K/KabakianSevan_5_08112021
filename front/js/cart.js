@@ -13,7 +13,7 @@ async function buildHtmlStructure(cart) {
   for (let i = 0; i < cartToDisplay.length; i++) {
     //     3.1 - récupérer l'article i dans le panier
     let itemToDisplay = cart[i];
-    console.log(`Item with index ${i} into the cart`, itemToDisplay);
+    // console.log(`Item with index ${i} into the cart`, itemToDisplay);
     //     3.2 - récupérer les information de l'API à partir de l'id (done) et les stocker dans une variable
     let productConcerned = await getProductById(itemToDisplay.id);
     // console.log(productConcerned);
@@ -53,7 +53,7 @@ let calculateCartTotalPrice = async (cart) => {
     let productConcerned = await getProductById(item.id);
     totalPrice += productConcerned.price;
   }
-  console.log("Montant total du panier : ", totalPrice);
+  // console.log("Montant total du panier : ", totalPrice);
   return totalPrice;
 };
 
@@ -82,17 +82,6 @@ displayCart(cartToDisplay);
 /*          Edit cart on cart page          */
 /* ---------------------------------------- */
 
-// 1 quand l'article en question est cliqué => récupérer son data-id (comment ?)
-
-// 2 cas ou il faut modifier la quantité
-//    2.1 Réupérer la valeur de quantité modifiée
-//    2.2 Modifier le cartToDisplay et ou le local storage
-//    2.3 Afficher le nouveau cart
-// 3 cas ou il faut supprimer l'article
-//    3.1 Réupérer la valeur de quantité modifiée
-//    3.2 Modifier le cartToDisplay et ou le local storage
-// 4 Afficher le nouveau cart
-
 // function to remove items from cart on page
 function removeItemFromCart() {
   // get all DOM elements which class is deleteItem
@@ -109,7 +98,7 @@ function removeItemFromCart() {
       itemToDelete.remove();
       // remove the item from the sessionStorage
       sessionStorage.removeItem(itemToDeleteId);
-      console.log(sessionStorage);
+      // console.log(sessionStorage);
       // update cartToDisplay
       cartToDisplay = buildCartFromStorage();
     });
@@ -125,11 +114,28 @@ function changeItemQuantity() {
     quantityInput.addEventListener("change", function (event) {
       // get the new quantity whiched by user
       let newQuantity = event.target.value;
-      console.log(newQuantity);
+      // console.log(newQuantity);
       // get the item (closest article parent) to modify and its id
       itemToModify = quantityInput.closest("article");
       itemToModifyId = itemToModify.dataset.id;
-      console.log(itemToModifyId);
+      console.log("id de l'élément à modifier",itemToModifyId);
+      // modify quantity on page : is it necessary ?
+      quantityInput.setAttribute("value", newQuantity);
+      // moodify sessionSTorage
+      let storageItemToModify = JSON.parse(
+        sessionStorage.getItem(itemToModifyId)
+      ); // use key to find the item and parse it into JS object
+      storageItemToModify.quantity = newQuantity; // modify quantity
+      sessionStorage.setItem(
+        itemToModifyId,
+        JSON.stringify(storageItemToModify)
+      ); // update sessionStorage
+      // console.log(
+      //   "Storage après modification de la quantité sur la page panier",
+      //   sessionStorage
+      // );
+      // update cartToDisplay
+      cartToDisplay = buildCartFromStorage();
     });
   }
 }
