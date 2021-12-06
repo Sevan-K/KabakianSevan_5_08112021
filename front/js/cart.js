@@ -1,9 +1,17 @@
-/* ------------------------------------------------- */
-/*          Display items from cart on page          */
-/* ------------------------------------------------- */
+/* ---------------------------------------------- */
+/*          General variables definition          */
+/* ---------------------------------------------- */
 
 // build cart from storage (done)
 let cartToDisplay = buildCartFromStorage();
+// constant corresponding to DOM element which id is totalQuantity
+const totalQuantity = document.getElementById("totalQuantity");
+// constant corresponding to DOM element which id is totalPrice
+const totalPrice = document.getElementById("totalPrice");
+
+/* ------------------------------------------------- */
+/*          Display items from cart on page          */
+/* ------------------------------------------------- */
 
 // fonction pour créer la structure HTML à ajouter
 async function buildHtmlStructure(cart) {
@@ -45,38 +53,47 @@ async function buildHtmlStructure(cart) {
   return htmlStructure;
 }
 
+// function to calculate the number of items
+let calculateNumberOfItems = (cart) => {
+  console.log(cart);
+  let numberOfItems = 0;
+  for (let item of cart) {
+    numberOfItems += item.quantity;
+    console.log(item.quantity);
+  }
+  return numberOfItems;
+};
+
 // function to calculate the total Price of items on cart
 let calculateCartTotalPrice = async (cart) => {
-  let totalPrice = 0;
+  let cartTotalPrice = 0;
   for (let item of cart) {
     // get price item
-    let productConcerned = await getProductById(item.id);
-    totalPrice += productConcerned.price;
+    let productForTotalPriceCalculation = await getProductById(item.id);
+    // add item price times item quantity to total price
+    cartTotalPrice += productForTotalPriceCalculation.price * item.quantity;
   }
   // console.log("Montant total du panier : ", totalPrice);
-  return totalPrice;
+  return cartTotalPrice;
 };
 
 // function to display cart in cart page
-async function displayCart(cart) {
+async function displayCart() {
   // build html sturcture from the cartToDisplay
-  let cartHtmlStructure = await buildHtmlStructure(cart);
+  let cartHtmlStructure = await buildHtmlStructure(cartToDisplay);
   //   4 - Ajouter le bloc HTML cartHtmlStructure avec la méthode innerHTML
   const cartItems = document.getElementById("cart__items");
   cartItems.innerHTML = cartHtmlStructure;
   // display the number of items on cart
-  let numberOfItemsOnCart = cart.length;
-  const totalQuantity = document.getElementById("totalQuantity");
-  totalQuantity.textContent = numberOfItemsOnCart;
+  totalQuantity.textContent = calculateNumberOfItems(cartToDisplay);
   // display cart's total Price
-  const totalPrice = document.getElementById("totalPrice");
-  totalPrice.textContent = await calculateCartTotalPrice(cart);
+  totalPrice.textContent = await calculateCartTotalPrice(cartToDisplay);
   // calling the function to remove items from cart
   removeItemFromCart();
   // calling the function to modify quantity of items
   changeItemQuantity();
 }
-displayCart(cartToDisplay);
+displayCart();
 
 /* ---------------------------------------- */
 /*          Edit cart on cart page          */
@@ -89,7 +106,7 @@ function removeItemFromCart() {
   // console.log("élément deleteButtons", deleteButtons);
   // loop to target the element that has been clicked on
   for (let deleteButton of deleteButtons) {
-    deleteButton.addEventListener("click", function () {
+    deleteButton.addEventListener("click", async function () {
       // get the item (closest article parent) to remove and its id
       let itemToDelete = deleteButton.closest("article");
       let itemToDeleteId = itemToDelete.dataset.id;
@@ -101,6 +118,10 @@ function removeItemFromCart() {
       // console.log(sessionStorage);
       // update cartToDisplay
       cartToDisplay = buildCartFromStorage();
+      // update the number of items on cart
+      totalQuantity.textContent = calculateNumberOfItems(cartToDisplay);
+      // update cart's total Price
+      totalPrice.textContent = await calculateCartTotalPrice(cartToDisplay);
     });
   }
 }
@@ -111,14 +132,14 @@ function changeItemQuantity() {
   const quantityInputs = document.getElementsByClassName("itemQuantity");
   // console.log("éléments quantityInputs", quantityInputs);
   for (let quantityInput of quantityInputs) {
-    quantityInput.addEventListener("change", function (event) {
+    quantityInput.addEventListener("change", async function (event) {
       // get the new quantity whiched by user
-      let newQuantity = event.target.value;
+      let newQuantity = parseInt(event.target.value);
       // console.log(newQuantity);
       // get the item (closest article parent) to modify and its id
       itemToModify = quantityInput.closest("article");
       itemToModifyId = itemToModify.dataset.id;
-      console.log("id de l'élément à modifier",itemToModifyId);
+      console.log("id de l'élément à modifier", itemToModifyId);
       // modify quantity on page : is it necessary ?
       quantityInput.setAttribute("value", newQuantity);
       // moodify sessionSTorage
@@ -136,6 +157,10 @@ function changeItemQuantity() {
       // );
       // update cartToDisplay
       cartToDisplay = buildCartFromStorage();
+      // update the number of items on cart
+      totalQuantity.textContent = calculateNumberOfItems(cartToDisplay);
+      // update cart's total Price
+      totalPrice.textContent = await calculateCartTotalPrice(cartToDisplay);
     });
   }
 }

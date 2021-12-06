@@ -29,11 +29,11 @@ let addColors = (colors) => {
     color.textContent = colors[i];
   }
 };
-
+let product;
 // function to add product info
 async function addProductInfo() {
   // getting the product information
-  let product = await getProductById(productId);
+  product = await getProductById(productId);
   console.log("Information du produit dont on a récupérer l'id", product);
   // adding product info into HTML elmeents
   image.setAttribute("src", product.imageUrl);
