@@ -21,6 +21,7 @@ let getProductById = async function (id) {
 /*          Functions related to cart modification          */
 /* -------------------------------------------------------- */
 
+// create a class CartItem
 class CartItem {
   constructor(id, quantity, color) {
     this.id = id;
@@ -28,7 +29,6 @@ class CartItem {
     this.color = color;
   }
 }
-// sessionStorage.clear();
 // ligne pour vérifier l'état du sessionStorage en arrivant sur la page
 console.log("Etat du storage en arrivant sur la page", sessionStorage);
 
@@ -83,7 +83,7 @@ let getItemInfoOnCart = (cart, item) => {
 
 // fonction to build cart from the local storage
 function buildCartFromStorage() {
-  let storedCart = [];
+  let cartToBuild = [];
   // if there is nothing on the local storage it means there is nothing on the cart
   if (sessionStorage.length > 0) {
     for (let j = 0; j < sessionStorage.length; j++) {
@@ -93,12 +93,12 @@ function buildCartFromStorage() {
       let value = sessionStorage.getItem(key);
       if (key != "IsThisFirstTime_Log_From_LiveServer") {
         // parsing the value to an JS object
-        storedCart.push(JSON.parse(value));
+        cartToBuild.push(JSON.parse(value));
       }
     }
   }
-  console.log("Panier construit à partir du sessionStorage", storedCart);
-  return storedCart;
+  console.log("Panier construit à partir du sessionStorage", cartToBuild);
+  return cartToBuild;
 }
 // tests de la fonction getItemInfoOnCart
 // let cart = [test2];

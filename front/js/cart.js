@@ -73,6 +73,8 @@ async function displayCart(cart) {
   totalPrice.textContent = await calculateCartTotalPrice(cart);
   // calling the function to remove items from cart
   removeItemFromCart();
+  // calling the function to modify quantity of items
+  changeItemQuantity();
 }
 displayCart(cartToDisplay);
 
@@ -93,16 +95,16 @@ displayCart(cartToDisplay);
 
 // function to remove items from cart on page
 function removeItemFromCart() {
-  // get all DOM elements which class is cart__item
+  // get all DOM elements which class is deleteItem
   const deleteButtons = document.getElementsByClassName("deleteItem");
-  console.log("élément deleteButtons", deleteButtons);
+  // console.log("élément deleteButtons", deleteButtons);
   // loop to target the element that has been clicked on
   for (let deleteButton of deleteButtons) {
     deleteButton.addEventListener("click", function () {
-      // get the id of the closest parent article (the one to delete)
+      // get the item (closest article parent) to remove and its id
       let itemToDelete = deleteButton.closest("article");
       let itemToDeleteId = itemToDelete.dataset.id;
-      console.log("élément deleteButton", itemToDeleteId);
+      console.log("id de l'élément deleteButton", itemToDeleteId);
       // remove itemToDelete from the page
       itemToDelete.remove();
       // remove the item from the sessionStorage
@@ -110,6 +112,24 @@ function removeItemFromCart() {
       console.log(sessionStorage);
       // update cartToDisplay
       cartToDisplay = buildCartFromStorage();
+    });
+  }
+}
+
+// function to modify one item quatity
+function changeItemQuantity() {
+  // get all DOM elements which class is itemQuantity
+  const quantityInputs = document.getElementsByClassName("itemQuantity");
+  // console.log("éléments quantityInputs", quantityInputs);
+  for (let quantityInput of quantityInputs) {
+    quantityInput.addEventListener("change", function (event) {
+      // get the new quantity whiched by user
+      let newQuantity = event.target.value;
+      console.log(newQuantity);
+      // get the item (closest article parent) to modify and its id
+      itemToModify = quantityInput.closest("article");
+      itemToModifyId = itemToModify.dataset.id;
+      console.log(itemToModifyId);
     });
   }
 }

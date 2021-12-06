@@ -49,22 +49,24 @@ addProductInfo();
 /*          Adding products to cart          */
 /* ----------------------------------------- */
 
+// build cart form storage
+let cartToModify = buildCartFromStorage();
+
 // code to be executed when addToCart button is clicked on
 const addToCart = document.getElementById("addToCart");
 addToCart.addEventListener("click", function () {
   if (colorSelect.value == "" || quantity.value == 0) {
     alert("Sélectionnez une couleur et un nombre d'article supérieur à 0");
   } else {
-    console.log("Couleur :", colorSelect.value);
-    console.log("Quantité", quantity.value);
-    // appel des différentes fonctions :
-    // 1 - get information about the item to add to cart
+    // console.log("Couleur :", colorSelect.value);
+    // console.log("Quantité", quantity.value);
+    // get information about the item to add to cart
     let itemToAdd = getItem();
-    // build cart form storage
-    let cartToModify = buildCartFromStorage();
     //modify the cart according the item to add
     let cartModified = addItemToCart(cartToModify, itemToAdd);
     // store cart into sessionStorage
     storeCart(cartModified);
+    // update cart
+    cartToModify = cartModified;
   }
 });
