@@ -71,8 +71,8 @@ async function displayCart(cart) {
   // display cart's total Price
   const totalPrice = document.getElementById("totalPrice");
   totalPrice.textContent = await calculateCartTotalPrice(cart);
-  // test
-  testDelete();
+  // calling the function to remove items from cart
+  removeItemFromCart();
 }
 displayCart(cartToDisplay);
 
@@ -91,16 +91,25 @@ displayCart(cartToDisplay);
 //    3.2 Modifier le cartToDisplay et ou le local storage
 // 4 Afficher le nouveau cart
 
-// test pour supprimer une ligne
-function testDelete() {
-  // stockage des articles
-  const deleteButtons = document.getElementsByClassName("cart__item");
+// function to remove items from cart on page
+function removeItemFromCart() {
+  // get all DOM elements which class is cart__item
+  const deleteButtons = document.getElementsByClassName("deleteItem");
   console.log("élément deleteButtons", deleteButtons);
-  // boucle pour savoir sur lequel il y a un click
+  // loop to target the element that has been clicked on
   for (let deleteButton of deleteButtons) {
     deleteButton.addEventListener("click", function () {
-      let itemToDeleteId = deleteButton.dataset.id;
+      // get the id of the closest parent article (the one to delete)
+      let itemToDelete = deleteButton.closest("article");
+      let itemToDeleteId = itemToDelete.dataset.id;
       console.log("élément deleteButton", itemToDeleteId);
+      // remove itemToDelete from the page
+      itemToDelete.remove();
+      // remove the item from the sessionStorage
+      sessionStorage.removeItem(itemToDeleteId);
+      console.log(sessionStorage);
+      // update cartToDisplay
+      cartToDisplay = buildCartFromStorage();
     });
   }
 }
