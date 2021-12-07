@@ -164,3 +164,61 @@ function changeItemQuantity() {
     });
   }
 }
+
+/* ------------------------------------------------ */
+/*          Get contact data from the form          */
+/* ------------------------------------------------ */
+
+// target the order button
+const orderButton = document.getElementById("order");
+
+// create a ContactObject class
+class ContactObject {
+  constructor(firstName, lastName, address, city, email) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.address = address;
+    this.city = city;
+    this.email = email;
+  }
+}
+
+let contactObject;
+
+// function to build the contact
+let buildContactObject = () => {
+  return new ContactObject(
+    document.getElementById("firstName").value,
+    document.getElementById("lastName").value,
+    document.getElementById("address").value,
+    document.getElementById("city").value,
+    document.getElementById("email").value
+  );
+};
+// function using a regex to verify if the value is a wordfrom 3 to 20 characters
+function isWordFrom3To20Character(formValue) {
+  return /^[A-Za-z]{3,20}$/.test(formValue);
+}
+// functiun to check if the form is valid ans display error messages if requirred
+let checkIfFormIsValid = () => {
+  let isFormValid = true;
+  let firstNameElement = document.getElementById("firstName");
+  if (isOnlyTextFrom3To20Character(firstNameElement.value)) {
+
+  }
+
+  // return object2;
+};
+
+// add an event listener on the button
+orderButton.addEventListener("click", function (event) {
+  event.preventDefault();
+  contactObject = buildContactObject();
+
+  console.log("Object built :", contactObject);
+  if (/^[A-Za-z]{3,20}$/.test(contactObject.firstName)) {
+    console.log("OK");
+  } else {
+    console.log("KO");
+  }
+});
