@@ -73,7 +73,6 @@ let getItemInfoOnCart = (cart, item) => {
       itemInfoOnCart.isIdOnCart = true;
       itemInfoOnCart.cartIndex = loopCount;
     }
-    console.log("vérif couleur", cart[loopCount].id === item.id);
     loopCount++;
   }
   // for (let i = 0; i < cart.length; i++) {}

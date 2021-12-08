@@ -287,9 +287,20 @@ function checkIfEmailIsValid() {
   }
 }
 
-// 
-function checkIfFormValueIsValid(formInput,regex,textForErrorMsg){
-  
+// création d'un fonction checkIfFormInputIsValid générale pour remplacer les autres fonction crées
+function checkIfFormInputIsValid(formInput, regex, textForErrorMsg) {
+  let formValue = document.getElementById(formInput).value;
+  if (formValue === "") {
+    document.getElementById(`${formInput}ErrorMsg`).textContent =
+      `Veuillez renseigner ${textForErrorMsg}.`;
+    return false;
+  } else if (regex.test(formValue) === false) {
+    document.getElementById(`${formInput}ErrorMsg`).textContent =
+      `Veuillez renseigner ${textForErrorMsg} valide.`;
+    return false;
+  } else {
+    document.getElementById(`${formInput}ErrorMsg`).textContent = "";
+    return true;
 }
 // functiun to check if the form is valid ans display error messages if requirred
 let checkIfFormIsValid = () => {
@@ -314,6 +325,13 @@ orderButton.addEventListener("click", function (event) {
     console.log("Récupération du formulaire : OK");
     contactObject = buildContactObject();
     console.log("Contact object", contactObject);
+    // constituer l'objet à envoyer au serveur (contactObject + cart)
+    let objectToSend = {
+      contact: contactObject,
+      cart: cartToDisplay,
+    };
+    console.log(objectToSend);
+    // stocker l'objet contact dans le local storage ?
   } else {
     console.log("Récupération du formulaire : KO");
   }
