@@ -197,7 +197,8 @@ let buildContactObject = () => {
 };
 // function using a regex to verify if the value is a wordfrom 3 to 20 characters
 function isWordFrom3To20Character(formValue) {
-  return /^[A-Za-z]{3,20}$/.test(formValue);
+  return /^\b([A-ZÀ-ÿ][-,a-z. ']{2,20}[ ]*){1,7}$/.test(formValue);
+  // /^$[A-Za-z]{2-20}/
 }
 
 // function to check if the firstName is valid
@@ -238,11 +239,11 @@ function checkIfLastNameIsValid() {
 function checkIfAddressIsValid() {
   const address = document.getElementById("address").value;
   if (address === "") {
-    document.getElementById("adressErrorMsg").textContent =
+    document.getElementById("addressErrorMsg").textContent =
       "Veuillez renseigner une adresse.";
     return false;
-  } else if (/^$/.test(address) === false) {
-    document.getElementById("adressErrorMsg").textContent =
+  } else if (/^[A-Za-z0-9]{5,50}$/.test(address) === false) {
+    document.getElementById("addressErrorMsg").textContent =
       "Veuillez renseigner une adresse valide.";
     return false;
   } else {
@@ -290,7 +291,14 @@ let checkIfFormIsValid = () => {
   const isLastNameValid = checkIfLastNameIsValid();
   const isCityValid = checkIfCityIsValid();
   const isEmailValid = checkIfEmailIsValid();
-  return isFirstNameValid && isLastNameValid && isCityValid && isEmailValid;
+  const isAddressValid = checkIfAddressIsValid();
+  return (
+    isFirstNameValid &&
+    isLastNameValid &&
+    isCityValid &&
+    isEmailValid &&
+    isAddressValid
+  );
 };
 
 // add an event listener on the button
