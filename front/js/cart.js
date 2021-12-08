@@ -291,16 +291,19 @@ function checkIfEmailIsValid() {
 function checkIfFormInputIsValid(formInput, regex, textForErrorMsg) {
   let formValue = document.getElementById(formInput).value;
   if (formValue === "") {
-    document.getElementById(`${formInput}ErrorMsg`).textContent =
-      `Veuillez renseigner ${textForErrorMsg}.`;
+    document.getElementById(
+      `${formInput}ErrorMsg`
+    ).textContent = `Veuillez renseigner ${textForErrorMsg}.`;
     return false;
   } else if (regex.test(formValue) === false) {
-    document.getElementById(`${formInput}ErrorMsg`).textContent =
-      `Veuillez renseigner ${textForErrorMsg} valide.`;
+    document.getElementById(
+      `${formInput}ErrorMsg`
+    ).textContent = `Veuillez renseigner ${textForErrorMsg} valide.`;
     return false;
   } else {
     document.getElementById(`${formInput}ErrorMsg`).textContent = "";
     return true;
+  }
 }
 // functiun to check if the form is valid ans display error messages if requirred
 let checkIfFormIsValid = () => {
