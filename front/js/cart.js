@@ -199,26 +199,108 @@ let buildContactObject = () => {
 function isWordFrom3To20Character(formValue) {
   return /^[A-Za-z]{3,20}$/.test(formValue);
 }
+
+// function to check if the firstName is valid
+function checkIfFirstNameIsValid() {
+  const firstName = document.getElementById("firstName").value;
+  if (firstName === "") {
+    document.getElementById("firstNameErrorMsg").textContent =
+      "Veuillez renseigner un prénom.";
+    return false;
+  } else if (isWordFrom3To20Character(firstName) === false) {
+    document.getElementById("firstNameErrorMsg").textContent =
+      "Veuillez renseigner un prénom valide.";
+    return false;
+  } else {
+    document.getElementById("firstNameErrorMsg").textContent = "";
+    return true;
+  }
+}
+
+// function to check if the lastName is valid
+function checkIfLastNameIsValid() {
+  const lastName = document.getElementById("lastName").value;
+  if (lastName === "") {
+    document.getElementById("lastNameErrorMsg").textContent =
+      "Veuillez renseigner un nom.";
+    return false;
+  } else if (isWordFrom3To20Character(lastName) === false) {
+    document.getElementById("lastNameErrorMsg").textContent =
+      "Veuillez renseigner un nom valide.";
+    return false;
+  } else {
+    document.getElementById("lastNameErrorMsg").textContent = "";
+    return true;
+  }
+}
+
+// function to check if the address is valid (WIP !!!!!!!!!!!!!!!!!!!!!)
+function checkIfAddressIsValid() {
+  const address = document.getElementById("address").value;
+  if (address === "") {
+    document.getElementById("adressErrorMsg").textContent =
+      "Veuillez renseigner une adresse.";
+    return false;
+  } else if (/^$/.test(address) === false) {
+    document.getElementById("adressErrorMsg").textContent =
+      "Veuillez renseigner une adresse valide.";
+    return false;
+  } else {
+    document.getElementById("addressErrorMsg").textContent = "";
+    return true;
+  }
+}
+
+// function to check if the city is valid
+function checkIfCityIsValid() {
+  const city = document.getElementById("city").value;
+  if (city === "") {
+    document.getElementById("cityErrorMsg").textContent =
+      "Veuillez renseigner une ville.";
+    return false;
+  } else if (isWordFrom3To20Character(city) === false) {
+    document.getElementById("cityErrorMsg").textContent =
+      "Veuillez renseigner un nom de ville valide.";
+    return false;
+  } else {
+    document.getElementById("cityErrorMsg").textContent = "";
+    return true;
+  }
+}
+
+// function to check if the email is valid
+function checkIfEmailIsValid() {
+  const email = document.getElementById("email").value;
+  if (email === "") {
+    document.getElementById("emailErrorMsg").textContent =
+      "Veuillez renseigner un email.";
+    return false;
+  } else if (/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(email) === false) {
+    document.getElementById("emailErrorMsg").textContent =
+      "Veuillez renseigner un email valide.";
+    return false;
+  } else {
+    document.getElementById("emailErrorMsg").textContent = "";
+    return true;
+  }
+}
 // functiun to check if the form is valid ans display error messages if requirred
 let checkIfFormIsValid = () => {
-  let isFormValid = true;
-  let firstNameElement = document.getElementById("firstName");
-  if (isOnlyTextFrom3To20Character(firstNameElement.value)) {
-
-  }
-
-  // return object2;
+  const isFirstNameValid = checkIfFirstNameIsValid();
+  const isLastNameValid = checkIfLastNameIsValid();
+  const isCityValid = checkIfCityIsValid();
+  const isEmailValid = checkIfEmailIsValid();
+  return isFirstNameValid && isLastNameValid && isCityValid && isEmailValid;
 };
 
 // add an event listener on the button
 orderButton.addEventListener("click", function (event) {
   event.preventDefault();
-  contactObject = buildContactObject();
-
-  console.log("Object built :", contactObject);
-  if (/^[A-Za-z]{3,20}$/.test(contactObject.firstName)) {
-    console.log("OK");
+  if (checkIfFormIsValid()) {
+    console.log("Récupération du formulaire : OK");
+    contactObject = buildContactObject();
+    console.log("Contact object", contactObject);
   } else {
-    console.log("KO");
+    console.log("Récupération du formulaire : KO");
   }
 });
