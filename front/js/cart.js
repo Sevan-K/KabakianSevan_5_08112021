@@ -197,9 +197,15 @@ let buildContactObject = () => {
 };
 // function using a regex to verify if the value is a wordfrom 3 to 20 characters
 function isWordFrom3To20Character(formValue) {
-  return /^\b([-A-ZÀ-ÿa-z. ']{2,20}[ ]*){1,7}$/.test(formValue);
-  // /^[A-Za-z]{2-20}$/ Only letter from 2 to 20 characters
-  // /^\b([A-ZÀ-ÿ][-,a-z. ']{2,20}[ ]*){1,7}$/
+  return /^\b((?!-)(?!.*--)(?!')(?!.*'')[-A-ZÀ-ÿa-z. ']{2,20}(?<!-)(?<!'))$/.test(
+    formValue
+  );
+  //   ^                        # Anchor at start of string
+  // (?!-)                      # Assert that the first character isn't a -
+  // (?!.*--)                   # Assert that there are no -- present anywhere
+  // [-A-ZÀ-ÿa-z. ']{2,20}      # Match from 2 to 20 allowed characters
+  // (?<!-)                     # Assert that the last one isn't a -
+  // $                          # Anchor at end of string
 }
 
 // function to check if the firstName is valid
@@ -243,7 +249,7 @@ function checkIfAddressIsValid() {
     document.getElementById("addressErrorMsg").textContent =
       "Veuillez renseigner une adresse.";
     return false;
-  } else if (/^[A-Za-z0-9\s]{5,50}$/.test(address) === false) {
+  } else if (/^((?!-)(?!.*--)(?!')(?!.*'')[-A-ZÀ-ÿa-z0-9\s']{5,50}(?<!-)(?<!'))$/.test(address) === false) {
     document.getElementById("addressErrorMsg").textContent =
       "Veuillez renseigner une adresse valide.";
     return false;
