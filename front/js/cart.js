@@ -172,6 +172,31 @@ function changeItemQuantity() {
 // target the order button
 const orderButton = document.getElementById("order");
 
+// contact object variable definition
+let contactObject;
+
+// regex definition
+// regex for names (firstName, lastName and city)
+const regexForNames =
+  /^\b((?!-)(?!.*--)(?!')(?!.*'')[-A-ZÀ-ÿa-z. ']{2,20}(?<!-)(?<!'))$/;
+//   ^                        # Anchor at start of string
+// (?!-)                      # Assert that the first character isn't a -
+// (?!.*--)                   # Assert that there are no -- present anywhere
+// [-A-ZÀ-ÿa-z. ']{2,20}      # Match from 2 to 20 allowed characters
+// (?<!-)                     # Assert that the last one isn't a -
+// $                          # Anchor at end of string
+
+// regex for email
+const regexForEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+// \w                      # Assert that matches any word or character (alphanumeric & underscore)
+// \.                   # Assert that matches a "." character
+// +      # Quantifier : Matches one or more the precedent token
+// @  # Assert that matches a "@" character
+
+// regex for addres
+const regexForAddress =
+  /^((?!-)(?!.*--)(?!')(?!.*'')[-A-ZÀ-ÿa-z0-9\s']{5,50}(?<!-)(?<!'))$/;
+
 // create a ContactObject class
 class ContactObject {
   constructor(firstName, lastName, address, city, email) {
@@ -183,8 +208,6 @@ class ContactObject {
   }
 }
 
-let contactObject;
-
 // function to build the contact
 let buildContactObject = () => {
   return new ContactObject(
@@ -195,105 +218,8 @@ let buildContactObject = () => {
     document.getElementById("email").value
   );
 };
-// function using a regex to verify if the value is a wordfrom 3 to 20 characters
-function isWordFrom3To20Character(formValue) {
-  return /^\b((?!-)(?!.*--)(?!')(?!.*'')[-A-ZÀ-ÿa-z. ']{2,20}(?<!-)(?<!'))$/.test(
-    formValue
-  );
-  //   ^                        # Anchor at start of string
-  // (?!-)                      # Assert that the first character isn't a -
-  // (?!.*--)                   # Assert that there are no -- present anywhere
-  // [-A-ZÀ-ÿa-z. ']{2,20}      # Match from 2 to 20 allowed characters
-  // (?<!-)                     # Assert that the last one isn't a -
-  // $                          # Anchor at end of string
-}
 
-// function to check if the firstName is valid
-function checkIfFirstNameIsValid() {
-  const firstName = document.getElementById("firstName").value;
-  if (firstName === "") {
-    document.getElementById("firstNameErrorMsg").textContent =
-      "Veuillez renseigner un prénom.";
-    return false;
-  } else if (isWordFrom3To20Character(firstName) === false) {
-    document.getElementById("firstNameErrorMsg").textContent =
-      "Veuillez renseigner un prénom valide.";
-    return false;
-  } else {
-    document.getElementById("firstNameErrorMsg").textContent = "";
-    return true;
-  }
-}
-
-// function to check if the lastName is valid
-function checkIfLastNameIsValid() {
-  const lastName = document.getElementById("lastName").value;
-  if (lastName === "") {
-    document.getElementById("lastNameErrorMsg").textContent =
-      "Veuillez renseigner un nom.";
-    return false;
-  } else if (isWordFrom3To20Character(lastName) === false) {
-    document.getElementById("lastNameErrorMsg").textContent =
-      "Veuillez renseigner un nom valide.";
-    return false;
-  } else {
-    document.getElementById("lastNameErrorMsg").textContent = "";
-    return true;
-  }
-}
-
-// function to check if the address is valid (WIP !!!!!!!!!!!!!!!!!!!!!)
-function checkIfAddressIsValid() {
-  const address = document.getElementById("address").value;
-  if (address === "") {
-    document.getElementById("addressErrorMsg").textContent =
-      "Veuillez renseigner une adresse.";
-    return false;
-  } else if (/^((?!-)(?!.*--)(?!')(?!.*'')[-A-ZÀ-ÿa-z0-9\s']{5,50}(?<!-)(?<!'))$/.test(address) === false) {
-    document.getElementById("addressErrorMsg").textContent =
-      "Veuillez renseigner une adresse valide.";
-    return false;
-  } else {
-    document.getElementById("addressErrorMsg").textContent = "";
-    return true;
-  }
-}
-
-// function to check if the city is valid
-function checkIfCityIsValid() {
-  const city = document.getElementById("city").value;
-  if (city === "") {
-    document.getElementById("cityErrorMsg").textContent =
-      "Veuillez renseigner une ville.";
-    return false;
-  } else if (isWordFrom3To20Character(city) === false) {
-    document.getElementById("cityErrorMsg").textContent =
-      "Veuillez renseigner un nom de ville valide.";
-    return false;
-  } else {
-    document.getElementById("cityErrorMsg").textContent = "";
-    return true;
-  }
-}
-
-// function to check if the email is valid
-function checkIfEmailIsValid() {
-  const email = document.getElementById("email").value;
-  if (email === "") {
-    document.getElementById("emailErrorMsg").textContent =
-      "Veuillez renseigner un email.";
-    return false;
-  } else if (/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(email) === false) {
-    document.getElementById("emailErrorMsg").textContent =
-      "Veuillez renseigner un email valide.";
-    return false;
-  } else {
-    document.getElementById("emailErrorMsg").textContent = "";
-    return true;
-  }
-}
-
-// création d'un fonction checkIfFormInputIsValid générale pour remplacer les autres fonction crées
+// function to check if an input of the form is valid according to a regex and display an error message if not
 function checkIfFormInputIsValid(formInput, regex, textForErrorMsg) {
   let formValue = document.getElementById(formInput).value;
   if (formValue === "") {
@@ -311,19 +237,46 @@ function checkIfFormInputIsValid(formInput, regex, textForErrorMsg) {
     return true;
   }
 }
+
 // functiun to check if the form is valid ans display error messages if requirred
 let checkIfFormIsValid = () => {
-  const isFirstNameValid = checkIfFirstNameIsValid();
-  const isLastNameValid = checkIfLastNameIsValid();
-  const isCityValid = checkIfCityIsValid();
-  const isEmailValid = checkIfEmailIsValid();
-  const isAddressValid = checkIfAddressIsValid();
+  // part to check if the firstName is valid
+  const isFirstNameValid = checkIfFormInputIsValid(
+    "firstName",
+    regexForNames,
+    "un prénom"
+  );
+  // part to check if the lastName is valid
+  const isLastNameValid = checkIfFormInputIsValid(
+    "lastName",
+    regexForNames,
+    "un nom"
+  );
+  // part to check if the city is valid
+  const isCityValid = checkIfFormInputIsValid(
+    "city",
+    regexForNames,
+    "une ville"
+  );
+  // part to check if the addres is valid
+  const isAddressValid = checkIfFormInputIsValid(
+    "address",
+    regexForAddress,
+    "une adresse"
+  );
+  // part to check if the email is valid
+  const isEmailValid = checkIfFormInputIsValid(
+    "email",
+    regexForEmail,
+    "un email"
+  );
+
   return (
     isFirstNameValid &&
     isLastNameValid &&
     isCityValid &&
-    isEmailValid &&
-    isAddressValid
+    isAddressValid &&
+    isEmailValid
   );
 };
 
