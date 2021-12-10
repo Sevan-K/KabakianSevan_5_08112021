@@ -59,7 +59,7 @@ let calculateNumberOfItems = (cart) => {
   let numberOfItems = 0;
   for (let item of cart) {
     numberOfItems += item.quantity;
-    console.log(item.quantity);
+    // console.log(item.quantity);
   }
   return numberOfItems;
 };
@@ -280,20 +280,57 @@ let checkIfFormIsValid = () => {
   );
 };
 
+// function returning true if the id is find on the list
+let checkIfIdOnList = (id, list) => {
+  let isIdOnList = false;
+  let loopCount = 0;
+  while (!isIdOnList && loopCount < list.length) {
+    isIdOnList = id === list[loopCount];
+    loopCount++;
+  }
+  return isIdOnList;
+};
+
+// function to build the cart to send to the API
+function buildItemsIdList(cart) {
+  // working cart that will be build with only the id
+  let workingList = [];
+  // for loop to go through all the items of cart
+  for (let item of cart) {
+    // if the item's id is on list
+    if (checkIfIdOnList(item.id, workingList)) {
+      // do nothing
+    } else {
+      // if not then add it
+      workingList.push(item.id);
+    }
+  }
+  console.log("Liste d'id construite à partir du panier :", workingList);
+  return workingList;
+}
+
 // add an event listener on the button
 orderButton.addEventListener("click", function (event) {
   event.preventDefault();
+  // if form data are valid allow to send them
   if (checkIfFormIsValid()) {
     console.log("Récupération du formulaire : OK");
     contactObject = buildContactObject();
     console.log("Contact object", contactObject);
+    // build productId list
+    let itemIdList = buildItemsIdList(cartToDisplay);
     // constituer l'objet à envoyer au serveur (contactObject + cart)
     let objectToSend = {
       contact: contactObject,
-      cart: cartToDisplay,
+      items: itemIdList,
     };
     console.log(objectToSend);
-    // stocker l'objet contact dans le local storage ?
+    // stocker l'objet contact dans le local storage
+    sessionStorage.setItem("objectToSend", JSON.stringify(objectToSend));
+    console.log(
+      "SessionStorage après stockage de l'objet à envoyer",
+      sessionStorage
+    );
   } else {
     console.log("Récupération du formulaire : KO");
   }
