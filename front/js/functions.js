@@ -90,7 +90,10 @@ function buildCartFromStorage() {
       let key = sessionStorage.key(j);
       // revover the corresponding value
       let value = sessionStorage.getItem(key);
-      if (key != "IsThisFirstTime_Log_From_LiveServer") {
+      if (
+        key != "IsThisFirstTime_Log_From_LiveServer" &&
+        key != "objectToSend"
+      ) {
         // parsing the value to an JS object
         cartToBuild.push(JSON.parse(value));
       }

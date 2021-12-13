@@ -55,7 +55,7 @@ async function buildHtmlStructure(cart) {
 
 // function to calculate the number of items
 let calculateNumberOfItems = (cart) => {
-  console.log(cart);
+  // console.log(cart);
   let numberOfItems = 0;
   for (let item of cart) {
     numberOfItems += item.quantity;
@@ -287,6 +287,7 @@ let checkIfIdOnList = (id, list) => {
   while (!isIdOnList && loopCount < list.length) {
     isIdOnList = id === list[loopCount];
     loopCount++;
+    console.log("passage dans le vérificateur");
   }
   return isIdOnList;
 };
@@ -309,6 +310,41 @@ function buildItemsIdList(cart) {
   return workingList;
 }
 
+// function to POST the object into the API
+async function insertPost(dataToAdd) {
+  try {
+    let response = await fetch("http://localhost:3000/api/products/order", {
+      //  method to use
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+      // body of the request
+      body: JSON.stringify(dataToAdd),
+    });
+    if (response.ok) {
+      let addedData = response.json();
+      console.log("Elément ajouté à l'API", addedData);
+    } else {
+      console.log(response.status);
+    }
+  } catch (error) {
+    console.log("Erreur lors de la tentative de POST : ", error);
+  }
+}
+
+let getOrder = async () => {
+  let response = fetch("http://localhost:3000/api/products/order");
+  if (response.ok) {
+    let data = await response.json();
+    console.log("Commandes :", data);
+    return data;
+  } else {
+    console.log(response.status);
+  }
+};
+
 // add an event listener on the button
 orderButton.addEventListener("click", function (event) {
   event.preventDefault();
@@ -320,17 +356,18 @@ orderButton.addEventListener("click", function (event) {
     // build productId list
     let itemIdList = buildItemsIdList(cartToDisplay);
     // constituer l'objet à envoyer au serveur (contactObject + cart)
-    let objectToSend = {
-      contact: contactObject,
-      items: itemIdList,
-    };
-    console.log(objectToSend);
+    let objectToSend = { contact: contactObject, items: itemIdList };
+    console.log("Objet à envoyer au serveur", objectToSend);
     // stocker l'objet contact dans le local storage
     sessionStorage.setItem("objectToSend", JSON.stringify(objectToSend));
     console.log(
       "SessionStorage après stockage de l'objet à envoyer",
       sessionStorage
     );
+    // insert the object into the API
+    let order = objectToSend;
+    insertPost(order);
+    // getOrder();
   } else {
     console.log("Récupération du formulaire : KO");
   }
