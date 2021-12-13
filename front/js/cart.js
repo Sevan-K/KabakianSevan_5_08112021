@@ -366,3 +366,16 @@ orderButton.addEventListener("click", async function (event) {
     console.log("Récupération du formulaire : KO");
   }
 });
+
+
+
+// récupération de l'iD de la commande concernée
+const urlOrderText = window.location.href;
+let urlOrder = new URL(urlOrderText);
+const orderIdFromURL = urlOrder.searchParams.get("id");
+console.log(
+  "id du produit qui a été cliqué sur la page d'accueil : ",
+  orderIdFromURL
+);
+const orderIdElement = document.getElementById("orderID");
+orderIdElement.textContent = orderIdFromURL;
