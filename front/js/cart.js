@@ -317,15 +317,16 @@ async function insertPost(dataToAdd) {
       //  method to use
       method: "POST",
       headers: {
-        "Accept": "application/json",
+        Accept: "application/json",
         "Content-Type": "application/json",
       },
       // body of the request
       body: JSON.stringify(dataToAdd),
     });
     if (response.ok) {
-      let addedData = response.json();
+      let addedData = await response.json();
       console.log("Elément ajouté à l'API", addedData);
+      return addedData;
     } else {
       console.log(response.status);
     }
@@ -334,19 +335,8 @@ async function insertPost(dataToAdd) {
   }
 }
 
-let getOrder = async () => {
-  let response = fetch("http://localhost:3000/api/products/order");
-  if (response.ok) {
-    let data = await response.json();
-    console.log("Commandes :", data);
-    return data;
-  } else {
-    console.log(response.status);
-  }
-};
-
 // add an event listener on the button
-orderButton.addEventListener("click", function (event) {
+orderButton.addEventListener("click", async function (event) {
   event.preventDefault();
   // if form data are valid allow to send them
   if (checkIfFormIsValid()) {
@@ -356,7 +346,10 @@ orderButton.addEventListener("click", function (event) {
     // build productId list
     let itemIdList = buildItemsIdList(cartToDisplay);
     // constituer l'objet à envoyer au serveur (contactObject + cart)
-    let objectToSend = { contact: contactObject, items: itemIdList };
+    let objectToSend = {
+      contact: contactObject,
+      products: itemIdList,
+    };
     console.log("Objet à envoyer au serveur", objectToSend);
     // stocker l'objet contact dans le local storage
     sessionStorage.setItem("objectToSend", JSON.stringify(objectToSend));
@@ -364,10 +357,11 @@ orderButton.addEventListener("click", function (event) {
       "SessionStorage après stockage de l'objet à envoyer",
       sessionStorage
     );
-    // insert the object into the API
-    let order = objectToSend;
-    insertPost(order);
-    // getOrder();
+    // insert the object into the API to get orderID
+    let order = await insertPost(objectToSend);
+    console.log("id de la commande passée", order.orderId);
+    // charge confirmation page avec le numéro de la commande
+    window.location.href = "confirmation.html?id=" + order.orderId;
   } else {
     console.log("Récupération du formulaire : KO");
   }
