@@ -29,8 +29,8 @@ class CartItem {
     this.color = color;
   }
 }
-// ligne pour vérifier l'état du sessionStorage en arrivant sur la page
-console.log("Etat du storage en arrivant sur la page", sessionStorage);
+// ligne pour vérifier l'état du localStorage en arrivant sur la page
+console.log("Etat du storage en arrivant sur la page", localStorage);
 
 // éléments pour les test sur les différéntes fonction nécessaires à l'ajout et la modificcation d'éléménets
 // const test = new CartItem(42, 12, "red");
@@ -38,10 +38,10 @@ console.log("Etat du storage en arrivant sur la page", sessionStorage);
 // const testStringified = JSON.stringify(test);
 // console.log("Test stringified : ", testStringified);
 // let testKey = test.id + "_" + test.color;
-// sessionStorage.setItem(testKey, testStringified);
-// testRecovered = JSON.parse(sessionStorage.getItem(testKey));
+// localStorage.setItem(testKey, testStringified);
+// testRecovered = JSON.parse(localStorage.getItem(testKey));
 // console.log("Test récupéré du local storage et parsé : ", testRecovered);
-// console.log("sessionStorage après ajout d'un premier élément", sessionStorage);
+// console.log("localStorage après ajout d'un premier élément", localStorage);
 
 // faire une fonction getItemToAddToCart qui construit la valeur de l'item à ajouter au panier
 let quantity = document.getElementById("quantity");
@@ -84,12 +84,12 @@ let getItemInfoOnCart = (cart, item) => {
 function buildCartFromStorage() {
   let cartToBuild = [];
   // if there is nothing on the local storage it means there is nothing on the cart
-  if (sessionStorage.length > 0) {
-    for (let j = 0; j < sessionStorage.length; j++) {
+  if (localStorage.length > 0) {
+    for (let j = 0; j < localStorage.length; j++) {
       // recover the name of the key
-      let key = sessionStorage.key(j);
+      let key = localStorage.key(j);
       // revover the corresponding value
-      let value = sessionStorage.getItem(key);
+      let value = localStorage.getItem(key);
       if (
         key != "IsThisFirstTime_Log_From_LiveServer" &&
         key != "objectToSend"
@@ -99,7 +99,7 @@ function buildCartFromStorage() {
       }
     }
   }
-  console.log("Panier construit à partir du sessionStorage", cartToBuild);
+  console.log("Panier construit à partir du localStorage", cartToBuild);
   return cartToBuild;
 }
 // tests de la fonction getItemInfoOnCart
@@ -139,20 +139,20 @@ function addItemToCart(cart, item) {
 
 // fonction pour ajouter le panier au local storage
 function storeCart(cart) {
-  // delete the old version of sessionStorage
-  sessionStorage.clear();
+  // delete the old version of localStorage
+  localStorage.clear();
   // store the items into the local storage
   for (item of cart) {
     let itemKey = item.id + "_" + item.color;
     const itemStringified = JSON.stringify(item);
-    sessionStorage.setItem(itemKey, itemStringified);
+    localStorage.setItem(itemKey, itemStringified);
   }
   console.log(
-    "sessionStorage après intégration du nouvel article",
-    sessionStorage
+    "localStorage après intégration du nouvel article",
+    localStorage
   );
 }
 
-// test pour la fonction stockage du pannier dans le sessionStorage
+// test pour la fonction stockage du pannier dans le localStorage
 // storeCart(testCart);
-// console.log("Etat du storage après les tests réalisés", sessionStorage);
+// console.log("Etat du storage après les tests réalisés", localStorage);

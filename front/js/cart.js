@@ -113,9 +113,9 @@ function removeItemFromCart() {
       console.log("id de l'élément deleteButton", itemToDeleteId);
       // remove itemToDelete from the page
       itemToDelete.remove();
-      // remove the item from the sessionStorage
-      sessionStorage.removeItem(itemToDeleteId);
-      // console.log(sessionStorage);
+      // remove the item from the localStorage
+      localStorage.removeItem(itemToDeleteId);
+      // console.log(localStorage);
       // update cartToDisplay
       cartToDisplay = buildCartFromStorage();
       // update the number of items on cart
@@ -142,18 +142,18 @@ function changeItemQuantity() {
       console.log("id de l'élément à modifier", itemToModifyId);
       // modify quantity on page : is it necessary ?
       quantityInput.setAttribute("value", newQuantity);
-      // moodify sessionSTorage
+      // moodify localSTorage
       let storageItemToModify = JSON.parse(
-        sessionStorage.getItem(itemToModifyId)
+        localStorage.getItem(itemToModifyId)
       ); // use key to find the item and parse it into JS object
       storageItemToModify.quantity = newQuantity; // modify quantity
-      sessionStorage.setItem(
+      localStorage.setItem(
         itemToModifyId,
         JSON.stringify(storageItemToModify)
-      ); // update sessionStorage
+      ); // update localStorage
       // console.log(
       //   "Storage après modification de la quantité sur la page panier",
-      //   sessionStorage
+      //   localStorage
       // );
       // update cartToDisplay
       cartToDisplay = buildCartFromStorage();
@@ -352,10 +352,10 @@ orderButton.addEventListener("click", async function (event) {
     };
     console.log("Objet à envoyer au serveur", objectToSend);
     // stocker l'objet contact dans le local storage
-    sessionStorage.setItem("objectToSend", JSON.stringify(objectToSend));
+    localStorage.setItem("objectToSend", JSON.stringify(objectToSend));
     console.log(
       "SessionStorage après stockage de l'objet à envoyer",
-      sessionStorage
+      localStorage
     );
     // insert the object into the API to get orderID
     let order = await insertPost(objectToSend);

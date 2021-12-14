@@ -59,14 +59,17 @@ addToCart.addEventListener("click", function () {
     alert("Sélectionnez une couleur et un nombre d'article supérieur à 0");
   } else {
     // console.log("Couleur :", colorSelect.value);
-    // console.log("Quantité", quantity.value);
+    // console.log("Quantité", quan
     // get information about the item to add to cart
     let itemToAdd = getItem();
     //modify the cart according the item to add
     let cartModified = addItemToCart(cartToModify, itemToAdd);
-    // store cart into sessionStorage
+    // store cart into localStorage
     storeCart(cartModified);
     // update cart
     cartToModify = cartModified;
+    if (confirm("Souhaitez vous être redirigé vers la page panier ?")) {
+      window.location.href = "cart.html";
+    }
   }
 });

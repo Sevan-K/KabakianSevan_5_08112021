@@ -14,5 +14,5 @@ console.log(
 const orderIdElement = document.getElementById("orderId");
 orderIdElement.textContent = orderIdFromURL;
 
-sessionStorage.clear()
-console.log("Nettoyage du localstorage :",sessionStorage);
+localStorage.clear()
+console.log("Nettoyage du localstorage :",localStorage);
