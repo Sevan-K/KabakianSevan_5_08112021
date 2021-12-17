@@ -147,10 +147,7 @@ function changeItemQuantity() {
         localStorage.getItem(itemToModifyId)
       ); // use key to find the item and parse it into JS object
       storageItemToModify.quantity = newQuantity; // modify quantity
-      localStorage.setItem(
-        itemToModifyId,
-        JSON.stringify(storageItemToModify)
-      ); // update localStorage
+      localStorage.setItem(itemToModifyId, JSON.stringify(storageItemToModify)); // update localStorage
       // console.log(
       //   "Storage après modification de la quantité sur la page panier",
       //   localStorage
@@ -270,7 +267,6 @@ let checkIfFormIsValid = () => {
     regexForEmail,
     "un email"
   );
-
   return (
     isFirstNameValid &&
     isLastNameValid &&
@@ -338,8 +334,14 @@ async function insertPost(dataToAdd) {
 // add an event listener on the button
 orderButton.addEventListener("click", async function (event) {
   event.preventDefault();
+  if (cartToDisplay.length === 0) {
+    alert("Votre panier est vide. Veuillez y ajouter au moins un article pour valider la commande");
+  }
   // if form data are valid allow to send them
-  if (checkIfFormIsValid()) {
+  else if (
+    checkIfFormIsValid() &&
+    confirm("Souhaitez vous valider la commande ?")
+  ) {
     console.log("Récupération du formulaire : OK");
     contactObject = buildContactObject();
     console.log("Contact object", contactObject);
