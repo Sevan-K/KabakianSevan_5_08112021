@@ -37,10 +37,11 @@ let getProducts = async function () {
     let response = await fetch("http://localhost:3000/api/products");
     // if the response is OK then
     if (response.ok) {
+      // data await the response to be converted into a JS object
       let data = await response.json();
       return data;
     } else {
-      // if the response is not OK then
+      // if the response is not OK then show response status
       console.log(
         "Statut d'erreur de la réponse de getProducts",
         response.status

@@ -2,83 +2,32 @@
 /*          Functions to get data from the API          */
 /* ---------------------------------------------------- */
 
-// function to get product's informations
+// function to get product's informations based on an id
 let getProductById = async function (id) {
   try {
+    // the variable response await for a return of fetch promise
     let response = await fetch("http://localhost:3000/api/products/" + id);
+    // if the response is OK then
     if (response.ok) {
+      // data await the response to be converted into a JS object
       let data = await response.json();
       return data;
     } else {
-      console.log(response.status);
+      // if the response is not OK then show response status
+      console.log("Statut d'erreur de la réponse de getProductById",response.status);
     }
   } catch (error) {
+    // adding a catch to be able to show the error if what is into the try does not work
     console.log(error);
   }
 };
 
-/* -------------------------------------------------------- */
-/*          Functions related to cart modification          */
-/* -------------------------------------------------------- */
+/* ------------------------------------------------------------ */
+/*          Functions related to cart and localStorage          */
+/* ------------------------------------------------------------ */
 
-// create a class CartItem
-class CartItem {
-  constructor(id, quantity, color) {
-    this.id = id;
-    this.quantity = quantity;
-    this.color = color;
-  }
-}
-// ligne pour vérifier l'état du localStorage en arrivant sur la page
+// check localStorage when loading page
 console.log("Etat du storage en arrivant sur la page", localStorage);
-
-// éléments pour les test sur les différéntes fonction nécessaires à l'ajout et la modificcation d'éléménets
-// const test = new CartItem(42, 12, "red");
-// const test2 = new CartItem(42, 12, "green");
-// const testStringified = JSON.stringify(test);
-// console.log("Test stringified : ", testStringified);
-// let testKey = test.id + "_" + test.color;
-// localStorage.setItem(testKey, testStringified);
-// testRecovered = JSON.parse(localStorage.getItem(testKey));
-// console.log("Test récupéré du local storage et parsé : ", testRecovered);
-// console.log("localStorage après ajout d'un premier élément", localStorage);
-
-// faire une fonction getItemToAddToCart qui construit la valeur de l'item à ajouter au panier
-let quantity = document.getElementById("quantity");
-let getItem = () => {
-  const itemQuantity = parseInt(quantity.value);
-  let itemToGet = new CartItem(productId, itemQuantity, colorSelect.value);
-  console.log("L'article créé est le suivant : ", itemToGet);
-  return itemToGet;
-};
-// test de la fonction pour récupérer les article de la page
-// getItem();
-
-// fonction qui parcours le panier et précise si l'article (id + couleur) est déjà présent
-let getItemInfoOnCart = (cart, item) => {
-  let itemInfoOnCart = {
-    cartIndex: 0,
-    isIdOnCart: false,
-    isItemOnCart: false,
-  };
-  let loopCount = 0;
-  while (itemInfoOnCart.isItemOnCart === false && loopCount < cart.length) {
-    if (
-      cart[loopCount].id === item.id &&
-      cart[loopCount].color === item.color
-    ) {
-      itemInfoOnCart.cartIndex = loopCount;
-      itemInfoOnCart.isItemOnCart = true;
-    } else if (cart[loopCount].id === item.id) {
-      itemInfoOnCart.isIdOnCart = true;
-      itemInfoOnCart.cartIndex = loopCount;
-    }
-    loopCount++;
-  }
-  // for (let i = 0; i < cart.length; i++) {}
-  console.log("Info de l'article dans le panier", itemInfoOnCart);
-  return itemInfoOnCart;
-};
 
 // fonction to build cart from the local storage
 function buildCartFromStorage() {
@@ -102,40 +51,6 @@ function buildCartFromStorage() {
   console.log("Panier construit à partir du localStorage", cartToBuild);
   return cartToBuild;
 }
-// tests de la fonction getItemInfoOnCart
-// let cart = [test2];
-// getItemInfoOnCart(cart, test);
-
-// fonction addItemToCart qui prend un newCartItem et l'ajoute au panier si nécessaire
-function addItemToCart(cart, item) {
-  // get item info on cart (is the item on cart or not) to know what to do
-  const itemOnCart = getItemInfoOnCart(cart, item);
-  // the exact same item is already on the cart
-  if (itemOnCart.isItemOnCart) {
-    // increment item quantity
-    cart[itemOnCart.cartIndex].quantity += item.quantity;
-  }
-  // a similar article is found on the cart
-  else if (itemOnCart.isIdOnCart) {
-    // add the item before the similar one
-    const indexToTarget = itemOnCart.cartIndex;
-    cart.splice(indexToTarget, 0, item);
-  }
-  // no similar item is found on cart
-  else {
-    cart.push(item);
-  }
-  console.log("Panier après modification ou ajout", cart);
-  return cart;
-}
-
-// série de test de la fonction addItemToCart
-// console.log("Test addtoCart 1, ajout d'un article similaire");
-// let testCart = addItemToCart(buildCartFromStorage(), test);
-// console.log("Test addtoCart 2, ajout d'un article similaire");
-// let testCart = addItemToCart(buildCartFromStorage(), test2);
-// console.log("Test addtoCart 3, ajout article dans un panier vide");
-// let testCart = addItemToCart([], test2);
 
 // fonction pour ajouter le panier au local storage
 function storeCart(cart) {
@@ -147,12 +62,5 @@ function storeCart(cart) {
     const itemStringified = JSON.stringify(item);
     localStorage.setItem(itemKey, itemStringified);
   }
-  console.log(
-    "localStorage après intégration du nouvel article",
-    localStorage
-  );
+  console.log("localStorage après intégration du nouvel article", localStorage);
 }
-
-// test pour la fonction stockage du pannier dans le localStorage
-// storeCart(testCart);
-// console.log("Etat du storage après les tests réalisés", localStorage);

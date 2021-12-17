@@ -52,6 +52,75 @@ addProductInfo();
 // build cart form storage
 let cartToModify = buildCartFromStorage();
 
+// variable to target DOM element with quantity id
+let quantityElement = document.getElementById("quantity");
+
+// create a class CartItem
+class CartItem {
+  constructor(id, quantity, color) {
+    this.id = id;
+    this.quantity = quantity;
+    this.color = color;
+  }
+}
+
+// getItem function build the item to add to cart by recovering need data on the DOM and from url
+let getItem = () => {
+  const itemQuantity = parseInt(quantityElement.value);
+  let itemToGet = new CartItem(productId, itemQuantity, colorSelect.value);
+  console.log("L'article créé est le suivant : ", itemToGet);
+  return itemToGet;
+};
+
+// fonction qui parcours le panier et précise si l'article (id + couleur) est déjà présent
+let getItemInfoOnCart = (cart, item) => {
+  let itemInfoOnCart = {
+    cartIndex: 0,
+    isIdOnCart: false,
+    isItemOnCart: false,
+  };
+  let loopCount = 0;
+  while (itemInfoOnCart.isItemOnCart === false && loopCount < cart.length) {
+    if (
+      cart[loopCount].id === item.id &&
+      cart[loopCount].color === item.color
+    ) {
+      itemInfoOnCart.cartIndex = loopCount;
+      itemInfoOnCart.isItemOnCart = true;
+    } else if (cart[loopCount].id === item.id) {
+      itemInfoOnCart.isIdOnCart = true;
+      itemInfoOnCart.cartIndex = loopCount;
+    }
+    loopCount++;
+  }
+  // for (let i = 0; i < cart.length; i++) {}
+  console.log("Info de l'article dans le panier", itemInfoOnCart);
+  return itemInfoOnCart;
+};
+
+// fonction addItemToCart qui prend un newCartItem et l'ajoute au panier si nécessaire
+function addItemToCart(cart, item) {
+  // get item info on cart (is the item on cart or not) to know what to do
+  const itemOnCart = getItemInfoOnCart(cart, item);
+  // the exact same item is already on the cart
+  if (itemOnCart.isItemOnCart) {
+    // increment item quantity
+    cart[itemOnCart.cartIndex].quantity += item.quantity;
+  }
+  // a similar article is found on the cart
+  else if (itemOnCart.isIdOnCart) {
+    // add the item before the similar one
+    const indexToTarget = itemOnCart.cartIndex;
+    cart.splice(indexToTarget, 0, item);
+  }
+  // no similar item is found on cart
+  else {
+    cart.push(item);
+  }
+  console.log("Panier après modification ou ajout", cart);
+  return cart;
+}
+
 // code to be executed when addToCart button is clicked on
 const addToCart = document.getElementById("addToCart");
 addToCart.addEventListener("click", function () {
