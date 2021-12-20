@@ -13,6 +13,7 @@ console.log(
 const urlOrderText = window.location.href;
 // transform this text into an url
 let urlOrder = new URL(urlOrderText);
+// get the id from url and store it into a variable
 const orderIdFromURL = urlOrder.searchParams.get("id");
 console.log("id de la commande passée : ", orderIdFromURL);
 // add the order id to page content

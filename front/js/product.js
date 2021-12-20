@@ -3,18 +3,18 @@
 /* ---------------------------------------------------- */
 
 // récupération de l'iD du produit concerné
-const urlText = window.location.href;
-let url = new URL(urlText);
-const productId = url.searchParams.get("id");
+const urlText = window.location.href; // get url text into a variable
+let url = new URL(urlText); // transform this text into an url
+const productId = url.searchParams.get("id"); // get the id from url and store it into a variable
 console.log(
   "id du produit qui a été cliqué sur la page d'accueil : ",
   productId
 );
 
-// Need HTML elements creation
+// Building HTML structure and reaching needed element to display product data
 const intemImg = document.getElementsByClassName("item__img")[0];
-const image = document.createElement("img");
-intemImg.appendChild(image);
+const image = document.createElement("img"); // create an image element
+intemImg.appendChild(image); // add this image to the .item__img
 const title = document.getElementById("title");
 const price = document.getElementById("price");
 const description = document.getElementById("description");
@@ -22,27 +22,34 @@ const colorSelect = document.getElementById("colors");
 
 // function to add the different colors into the select tag
 let addColors = (colors) => {
+  // for each color of color's list (colors)
   for (let i = 0; i < colors.length; i++) {
+    // create on option element on the DOM
     let color = document.createElement("option");
+    // the color option is added to the DOM element colorSelect (<select> to customize color)
     colorSelect.appendChild(color);
+    // option value is set to be the targeted color
     color.setAttribute("value", colors[i]);
+    // option textContent is set to be the targeted color
     color.textContent = colors[i];
   }
 };
 
-// function to add product info
+// function to add product info on product page
 async function addProductInfo() {
-  // getting the product information
+  // getting the product information from API by using the id
   let product = await getProductById(productId);
   console.log("Information du produit dont on a récupérer l'id", product);
   // adding product info into HTML elmeents
-  image.setAttribute("src", product.imageUrl);
-  image.setAttribute("alt", product.altTxt);
-  title.textContent = product.name;
-  price.textContent = " " + product.price + " ";
-  description.textContent = product.description;
-  addColors(product.colors);
+  image.setAttribute("src", product.imageUrl); // product's image
+  image.setAttribute("alt", product.altTxt); // product's alternative text of the image
+  title.textContent = product.name; // product's name
+  price.textContent = " " + product.price + " "; // product's price
+  description.textContent = product.description; // product's description
+  addColors(product.colors); // product's colors
 }
+
+// calling the function to add product info on product page
 addProductInfo();
 
 /* ----------------------------------------- */
@@ -66,13 +73,19 @@ class CartItem {
 
 // getItem function build the item to add to cart by recovering need data on the DOM and from url
 let getItem = () => {
+  // get item's quantity from DOM element and parse it into an integer
   const itemQuantity = parseInt(quantityElement.value);
+  // buil the item to get from DOM element
   let itemToGet = new CartItem(productId, itemQuantity, colorSelect.value);
   console.log("L'article créé est le suivant : ", itemToGet);
+  // the functon return the built item
   return itemToGet;
 };
 
-// fonction qui parcours le panier et précise si l'article (id + couleur) est déjà présent
+// function that go through cart and :
+// specify if the article (same id and same color) is already there
+// specify if a similar item is on cart (same id but different color)
+// give the index on tha cart of the same item or the first similar one
 let getItemInfoOnCart = (cart, item) => {
   let itemInfoOnCart = {
     cartIndex: 0,
@@ -119,6 +132,17 @@ function addItemToCart(cart, item) {
   }
   console.log("Panier après modification ou ajout", cart);
   return cart;
+}
+
+// function to store the cart into the localStorage
+function storeCart(cart) {
+  // store the items into the local storage
+  for (item of cart) {
+    let itemKey = item.id + "_" + item.color;
+    const itemStringified = JSON.stringify(item);
+    localStorage.setItem(itemKey, itemStringified);
+  }
+  console.log("localStorage après intégration du nouvel article", localStorage);
 }
 
 // code to be executed when addToCart button is clicked on

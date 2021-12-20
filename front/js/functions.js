@@ -14,7 +14,10 @@ let getProductById = async function (id) {
       return data;
     } else {
       // if the response is not OK then show response status
-      console.log("Statut d'erreur de la réponse de getProductById",response.status);
+      console.log(
+        "Statut d'erreur de la réponse de getProductById",
+        response.status
+      );
     }
   } catch (error) {
     // adding a catch to be able to show the error if what is into the try does not work
@@ -39,6 +42,7 @@ function buildCartFromStorage() {
       let key = localStorage.key(j);
       // revover the corresponding value
       let value = localStorage.getItem(key);
+      // add only elements with and valid key
       if (
         key != "IsThisFirstTime_Log_From_LiveServer" &&
         key != "objectToSend"
@@ -49,18 +53,6 @@ function buildCartFromStorage() {
     }
   }
   console.log("Panier construit à partir du localStorage", cartToBuild);
+  // the function return the cart built
   return cartToBuild;
-}
-
-// fonction pour ajouter le panier au local storage
-function storeCart(cart) {
-  // delete the old version of localStorage
-  localStorage.clear();
-  // store the items into the local storage
-  for (item of cart) {
-    let itemKey = item.id + "_" + item.color;
-    const itemStringified = JSON.stringify(item);
-    localStorage.setItem(itemKey, itemStringified);
-  }
-  console.log("localStorage après intégration du nouvel article", localStorage);
 }
