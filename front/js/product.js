@@ -87,27 +87,42 @@ let getItem = () => {
 // specify if a similar item is on cart (same id but different color)
 // give the index on tha cart of the same item or the first similar one
 let getItemInfoOnCart = (cart, item) => {
+  // set default value of the variable that specify if the item is on cart
   let itemInfoOnCart = {
     cartIndex: 0,
     isIdOnCart: false,
     isItemOnCart: false,
   };
+  // variable to count the number of loop
   let loopCount = 0;
-  while (itemInfoOnCart.isItemOnCart === false && loopCount < cart.length) {
+  // while loop to go through cart until the item or a similar on is found
+  while (
+    itemInfoOnCart.isItemOnCart === false &&
+    itemInfoOnCart.isIdOnCart === false &&
+    loopCount < cart.length
+  ) {
+    // if the item (same id and same color) is there
     if (
       cart[loopCount].id === item.id &&
       cart[loopCount].color === item.color
     ) {
+      // get cart index
       itemInfoOnCart.cartIndex = loopCount;
+      // specify that it is present by truning isItemOnCart to true
       itemInfoOnCart.isItemOnCart = true;
-    } else if (cart[loopCount].id === item.id) {
-      itemInfoOnCart.isIdOnCart = true;
-      itemInfoOnCart.cartIndex = loopCount;
     }
+    // if a similar item (same id but different color) is there
+    else if (cart[loopCount].id === item.id) {
+      // get cart index
+      itemInfoOnCart.cartIndex = loopCount;
+      // specify that it is present by truning isIdOnCart to true
+      itemInfoOnCart.isIdOnCart = true;
+    }
+    // increment loop counter
     loopCount++;
   }
-  // for (let i = 0; i < cart.length; i++) {}
   console.log("Info de l'article dans le panier", itemInfoOnCart);
+  // return the variable that specify if the item is on cart
   return itemInfoOnCart;
 };
 
@@ -138,8 +153,11 @@ function addItemToCart(cart, item) {
 function storeCart(cart) {
   // store the items into the local storage
   for (item of cart) {
+    // build a unique key containing product's id and color
     let itemKey = item.id + "_" + item.color;
+    // transform the item into a string
     const itemStringified = JSON.stringify(item);
+    // add the stingified item to local storage using its unique key
     localStorage.setItem(itemKey, itemStringified);
   }
   console.log("localStorage après intégration du nouvel article", localStorage);
@@ -151,8 +169,6 @@ addToCart.addEventListener("click", function () {
   if (colorSelect.value == "" || quantity.value == 0) {
     alert("Sélectionnez une couleur et un nombre d'article supérieur à 0");
   } else {
-    // console.log("Couleur :", colorSelect.value);
-    // console.log("Quantité", quan
     // get information about the item to add to cart
     let itemToAdd = getItem();
     //modify the cart according the item to add
@@ -161,6 +177,7 @@ addToCart.addEventListener("click", function () {
     storeCart(cartModified);
     // update cart
     cartToModify = cartModified;
+    // ask user to go to cart page
     if (confirm("Souhaitez vous être redirigé vers la page panier ?")) {
       window.location.href = "cart.html";
     }
