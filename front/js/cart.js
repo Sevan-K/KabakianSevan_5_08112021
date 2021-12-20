@@ -2,31 +2,33 @@
 /*          General variables definition          */
 /* ---------------------------------------------- */
 
-// build cart from storage (done)
+// build cart from storage when page is loaded
 let cartToDisplay = buildCartFromStorage();
 // constant corresponding to DOM element which id is totalQuantity
 const totalQuantity = document.getElementById("totalQuantity");
 // constant corresponding to DOM element which id is totalPrice
 const totalPrice = document.getElementById("totalPrice");
+// target the order button
+const orderButton = document.getElementById("order");
+// contact object variable definition
+let contactObject;
 
-/* ------------------------------------------------- */
-/*          Display items from cart on page          */
-/* ------------------------------------------------- */
+/* ------------------------------------------------------------- */
+/*          Function to display items from cart on page          */
+/* ------------------------------------------------------------- */
 
-// fonction pour créer la structure HTML à ajouter
+// function to build HTML structure to add to page to display cart
 async function buildHtmlStructure(cart) {
-  //   déclarer un array vide qui contiendra le code html cartHtmlStructure
+  //   array that will contain HTML structrure
   let htmlStructure = [];
-  //  parcourir l'array cart, pour chaque item :
+  //  going through cart array and :
   for (let i = 0; i < cartToDisplay.length; i++) {
-    //     3.1 - récupérer l'article i dans le panier
+    // get the item to display
     let itemToDisplay = cart[i];
-    // console.log(`Item with index ${i} into the cart`, itemToDisplay);
-    //     3.2 - récupérer les information de l'API à partir de l'id (done) et les stocker dans une variable
+    // get product's data from API using its ID
     let productConcerned = await getProductById(itemToDisplay.id);
     // console.log(productConcerned);
-    //     3.3 - à partir d'un produit (product) et d'un article du panier (cartItem),
-    //              compléter le code html et l'ajouter à HtmlStructure (function to create)
+    // complete HTML structure of the product concerned using data from the API and the cart and add it to the HTML structure array
     htmlStructure += `
       <article class="cart__item" data-id="${itemToDisplay.id}_${itemToDisplay.color}">
           <div class="cart__item__img">
@@ -50,22 +52,26 @@ async function buildHtmlStructure(cart) {
       </article>
     `;
   }
+  // the funcyino return the filled HTML structure array
   return htmlStructure;
 }
 
 // function to calculate the number of items
 let calculateNumberOfItems = (cart) => {
-  // console.log(cart);
+  // variable to store the total number of item
   let numberOfItems = 0;
+  // go through cart and for each item :
   for (let item of cart) {
+    // add item's quantity to the total number of items
     numberOfItems += item.quantity;
-    // console.log(item.quantity);
   }
+  // the function return the total number of item calculated from cart
   return numberOfItems;
 };
 
 // function to calculate the total Price of items on cart
 let calculateCartTotalPrice = async (cart) => {
+  // variable to store the total number of item
   let cartTotalPrice = 0;
   for (let item of cart) {
     // get price item
@@ -73,42 +79,24 @@ let calculateCartTotalPrice = async (cart) => {
     // add item price times item quantity to total price
     cartTotalPrice += productForTotalPriceCalculation.price * item.quantity;
   }
-  // console.log("Montant total du panier : ", totalPrice);
   return cartTotalPrice;
 };
 
-// function to display cart in cart page
-async function displayCart() {
-  // build html sturcture from the cartToDisplay
-  let cartHtmlStructure = await buildHtmlStructure(cartToDisplay);
-  //   4 - Ajouter le bloc HTML cartHtmlStructure avec la méthode innerHTML
-  const cartItems = document.getElementById("cart__items");
-  cartItems.innerHTML = cartHtmlStructure;
-  // display the number of items on cart
-  totalQuantity.textContent = calculateNumberOfItems(cartToDisplay);
-  // display cart's total Price
-  totalPrice.textContent = await calculateCartTotalPrice(cartToDisplay);
-  // calling the function to remove items from cart
-  removeItemFromCart();
-  // calling the function to modify quantity of items
-  changeItemQuantity();
-}
-displayCart();
-
-/* ---------------------------------------- */
-/*          Edit cart on cart page          */
-/* ---------------------------------------- */
+/* ----------------------------------------------------- */
+/*          Functions to edit cart on cart page          */
+/* ----------------------------------------------------- */
 
 // function to remove items from cart on page
 function removeItemFromCart() {
   // get all DOM elements which class is deleteItem
   const deleteButtons = document.getElementsByClassName("deleteItem");
-  // console.log("élément deleteButtons", deleteButtons);
   // loop to target the element that has been clicked on
   for (let deleteButton of deleteButtons) {
+    // listent to a click event on all delete buttons
     deleteButton.addEventListener("click", async function () {
-      // get the item (closest article parent) to remove and its id
+      // get the item (closest article parent)
       let itemToDelete = deleteButton.closest("article");
+      // get the closest article parent's id
       let itemToDeleteId = itemToDelete.dataset.id;
       console.log("id de l'élément deleteButton", itemToDeleteId);
       // remove itemToDelete from the page
@@ -126,32 +114,39 @@ function removeItemFromCart() {
   }
 }
 
+// function to modify an item's quantity on local storage based on its key
+function updateStorageItemQuantity(key, quantity) {
+  // use key to find the item and parse it into JS object
+  let storageItemToModify = JSON.parse(localStorage.getItem(key));
+  // modify quantity
+  storageItemToModify.quantity = quantity;
+  // update localStorage
+  localStorage.setItem(key, JSON.stringify(storageItemToModify));
+  // console.log(
+  //   "Storage après modification de la quantité sur la page panier",
+  //   localStorage
+  // );
+}
+
 // function to modify one item quatity
 function changeItemQuantity() {
   // get all DOM elements which class is itemQuantity
   const quantityInputs = document.getElementsByClassName("itemQuantity");
-  // console.log("éléments quantityInputs", quantityInputs);
+  // loop to target the element that has been clicked on
   for (let quantityInput of quantityInputs) {
+    // listent to a change event on all quantity inputs
     quantityInput.addEventListener("change", async function (event) {
       // get the new quantity whiched by user
       let newQuantity = parseInt(event.target.value);
-      // console.log(newQuantity);
-      // get the item (closest article parent) to modify and its id
+      // get the item (closest article parent) to modify
       itemToModify = quantityInput.closest("article");
+      // get the closest article parent's id
       itemToModifyId = itemToModify.dataset.id;
       console.log("id de l'élément à modifier", itemToModifyId);
-      // modify quantity on page : is it necessary ?
+      // modify quantity on page
       quantityInput.setAttribute("value", newQuantity);
       // moodify localSTorage
-      let storageItemToModify = JSON.parse(
-        localStorage.getItem(itemToModifyId)
-      ); // use key to find the item and parse it into JS object
-      storageItemToModify.quantity = newQuantity; // modify quantity
-      localStorage.setItem(itemToModifyId, JSON.stringify(storageItemToModify)); // update localStorage
-      // console.log(
-      //   "Storage après modification de la quantité sur la page panier",
-      //   localStorage
-      // );
+      updateStorageItemQuantity(itemToModifyId, newQuantity);
       // update cartToDisplay
       cartToDisplay = buildCartFromStorage();
       // update the number of items on cart
@@ -162,15 +157,34 @@ function changeItemQuantity() {
   }
 }
 
+/* --------------------------------------------------------------------- */
+/*          Main function to display and Edit cart on cart page          */
+/* --------------------------------------------------------------------- */
+
+// function to display cart in cart page
+async function displayCart() {
+  // build html sturcture from the cartToDisplay
+  let cartHtmlStructure = await buildHtmlStructure(cartToDisplay);
+  // target DOM element where the HTML structure will be injected
+  const cartItems = document.getElementById("cart__items");
+  // add HTML structure to the DOM using innerHTML
+  cartItems.innerHTML = cartHtmlStructure;
+  // display the number of items on cart
+  totalQuantity.textContent = calculateNumberOfItems(cartToDisplay);
+  // display cart's total Price
+  totalPrice.textContent = await calculateCartTotalPrice(cartToDisplay);
+  // calling the function to remove items from cart
+  removeItemFromCart();
+  // calling the function to modify quantity of items
+  changeItemQuantity();
+}
+
+// calling the main function to dsplay cart on page
+displayCart();
+
 /* ------------------------------------------------ */
 /*          Get contact data from the form          */
 /* ------------------------------------------------ */
-
-// target the order button
-const orderButton = document.getElementById("order");
-
-// contact object variable definition
-let contactObject;
 
 // regex definition
 // regex for names (firstName, lastName and city)
@@ -194,42 +208,37 @@ const regexForEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 const regexForAddress =
   /^((?!-)(?!.*--)(?!')(?!.*'')[-A-ZÀ-ÿa-z0-9\s']{5,50}(?<!-)(?<!'))$/;
 
-// create a ContactObject class
-class ContactObject {
-  constructor(firstName, lastName, address, city, email) {
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.address = address;
-    this.city = city;
-    this.email = email;
-  }
-}
-
-// function to build the contact
+// function to build the contact object
 let buildContactObject = () => {
-  return new ContactObject(
-    document.getElementById("firstName").value,
-    document.getElementById("lastName").value,
-    document.getElementById("address").value,
-    document.getElementById("city").value,
-    document.getElementById("email").value
-  );
+  return {
+    firstName: document.getElementById("firstName").value,
+    lastName: document.getElementById("lastName").value,
+    address: document.getElementById("address").value,
+    city: document.getElementById("city").value,
+    email: document.getElementById("email").value,
+  };
 };
 
 // function to check if an input of the form is valid according to a regex and display an error message if not
 function checkIfFormInputIsValid(formInput, regex, textForErrorMsg) {
+  // get input's value
   let formValue = document.getElementById(formInput).value;
+  // if input is empty ask to fil it
   if (formValue === "") {
     document.getElementById(
       `${formInput}ErrorMsg`
     ).textContent = `Veuillez renseigner ${textForErrorMsg}.`;
     return false;
-  } else if (regex.test(formValue) === false) {
+  }
+  // if the value is not valid return false and display an error message
+  else if (regex.test(formValue) === false) {
     document.getElementById(
       `${formInput}ErrorMsg`
     ).textContent = `Veuillez renseigner ${textForErrorMsg} valide.`;
     return false;
-  } else {
+  }
+  // else return true and display no error message
+  else {
     document.getElementById(`${formInput}ErrorMsg`).textContent = "";
     return true;
   }
@@ -267,6 +276,7 @@ let checkIfFormIsValid = () => {
     regexForEmail,
     "un email"
   );
+  // return true if all inputs ar valid and false if one of them in empty or invalid
   return (
     isFirstNameValid &&
     isLastNameValid &&
@@ -276,14 +286,18 @@ let checkIfFormIsValid = () => {
   );
 };
 
-// function returning true if the id is find on the list
+// function returning true if the id is find on the id list
 let checkIfIdOnList = (id, list) => {
+  // set default value of isIdOnList
   let isIdOnList = false;
+  // variable to count loops
   let loopCount = 0;
+  // go through list until the target id is found
   while (!isIdOnList && loopCount < list.length) {
+    // isIdOnList is true if the target id is present
     isIdOnList = id === list[loopCount];
+    // increment loop counter
     loopCount++;
-    console.log("passage dans le vérificateur");
   }
   return isIdOnList;
 };
@@ -302,13 +316,13 @@ function buildItemsIdList(cart) {
       workingList.push(item.id);
     }
   }
-  console.log("Liste d'id construite à partir du panier :", workingList);
   return workingList;
 }
 
 // function to POST the object into the API
 async function insertPost(dataToAdd) {
   try {
+    // the variable response await for a return of fetch promise
     let response = await fetch("http://localhost:3000/api/products/order", {
       //  method to use
       method: "POST",
@@ -319,14 +333,19 @@ async function insertPost(dataToAdd) {
       // body of the request
       body: JSON.stringify(dataToAdd),
     });
+    // if the response is OK then
     if (response.ok) {
-      let addedData = await response.json();
-      console.log("Elément ajouté à l'API", addedData);
-      return addedData;
+      // data await the response to be converted into a JS object
+      let data = await response.json();
+      console.log("Elément ajouté à l'API", data);
+      // return response's data
+      return data;
     } else {
+      // if the response is not OK then show response status
       console.log(response.status);
     }
   } catch (error) {
+    // adding a catch to be able to show the error if what is into the try does not work
     console.log("Erreur lors de la tentative de POST : ", error);
   }
 }
@@ -334,8 +353,11 @@ async function insertPost(dataToAdd) {
 // add an event listener on the button
 orderButton.addEventListener("click", async function (event) {
   event.preventDefault();
+  // if the cart is empty ask to add at leat one element
   if (cartToDisplay.length === 0) {
-    alert("Votre panier est vide. Veuillez y ajouter au moins un article pour valider la commande");
+    alert(
+      "Votre panier est vide. Veuillez y ajouter au moins un article pour valider la commande"
+    );
   }
   // if form data are valid allow to send them
   else if (
@@ -343,17 +365,17 @@ orderButton.addEventListener("click", async function (event) {
     confirm("Souhaitez vous valider la commande ?")
   ) {
     console.log("Récupération du formulaire : OK");
+    // build the contact object to send
     contactObject = buildContactObject();
-    console.log("Contact object", contactObject);
     // build productId list
     let itemIdList = buildItemsIdList(cartToDisplay);
-    // constituer l'objet à envoyer au serveur (contactObject + cart)
+    //build the object to send to the API (order) to get the orderId
     let objectToSend = {
       contact: contactObject,
       products: itemIdList,
     };
     console.log("Objet à envoyer au serveur", objectToSend);
-    // stocker l'objet contact dans le local storage
+    // store the objectToSend into the localStorage
     localStorage.setItem("objectToSend", JSON.stringify(objectToSend));
     console.log(
       "SessionStorage après stockage de l'objet à envoyer",
